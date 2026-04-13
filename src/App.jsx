@@ -962,6 +962,41 @@ export default function App() {
         <FinalCTA />
       </main>
       <Footer />
-    </>
-  );
+ <a
+  href="https://wa.me/919778405403?text=Hi%20I%20found%20GuideX%20and%20want%20to%20book%20a%20guide"
+  target="_blank"
+  rel="noopener noreferrer"
+  title="Chat on WhatsApp"
+  style={{
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    backgroundColor: "#25D366",
+    color: "white",
+    borderRadius: "50%",
+    width: "60px",
+    height: "60px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 4px 12px rgba(37,211,102,0.3)",
+    transition: "transform 0.2s, box-shadow 0.2s",
+    zIndex: 1000,
+    textDecoration: "none",
+  }}
+  onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}
+  onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 32 32"
+    width="28"
+    height="28"
+    fill="white"
+  >
+    <path d="M16 .5C7.4.5.5 7.4.5 16c0 2.8.7 5.4 2.1 7.7L.5 31.5l8-2.1c2.2 1.2 4.6 1.8 7.1 1.8 8.6 0 15.5-6.9 15.5-15.5S24.6.5 16 .5zm0 28.3c-2.3 0-4.5-.6-6.5-1.7l-.5-.3-4.7 1.2 1.3-4.6-.3-.5c-1.2-2-1.9-4.3-1.9-6.7C3.4 8.6 9.6 2.4 16 2.4S28.6 8.6 28.6 16 22.4 28.8 16 28.8zm7.5-9.3c-.4-.2-2.4-1.2-2.8-1.3-.4-.2-.6-.2-.9.2s-1 1.3-1.2 1.6c-.2.2-.4.3-.8.1-2.3-1.1-3.8-2-5.3-4.5-.4-.7.4-.6 1.1-2 .1-.2.1-.5 0-.7-.1-.2-.9-2.2-1.2-3-.3-.8-.6-.7-.9-.7h-.7c-.2 0-.7.1-1 .5s-1.4 1.4-1.4 3.4 1.5 4 1.7 4.3c.2.3 3 4.6 7.4 6.5 1 .4 1.8.6 2.4.8 1 .3 1.9.2 2.6.1.8-.1 2.4-1 2.8-1.9.3-.9.3-1.7.2-1.9-.1-.2-.3-.3-.7-.5z"/>
+  </svg>
+</a>
+</>
+);
 }
