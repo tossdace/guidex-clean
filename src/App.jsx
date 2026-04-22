@@ -374,7 +374,7 @@ const ValueProp = () => {
           }}>
             Skip the Tourist Traps
           </h2>
-          <p style={{ color: "var(--muted)", maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>
+          <p style={{ color: "#555", maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>
             Real travel is messy, unplanned, and deeply human. Voyara connects you to people who live it every day.
           </p>
         </div>
@@ -404,7 +404,7 @@ const ValueProp = () => {
                 {f.icon}
               </div>
               <h3 style={{ fontWeight: 700, fontSize: "1.05rem", color: colors.text, marginBottom: "0.5rem" }}>{f.title}</h3>
-              <p style={{ fontSize: "0.875rem", color: "var(--muted)", lineHeight: 1.75 }}>{f.desc}</p>
+              <p style={{ fontSize: "0.875rem", color: "#555", lineHeight: 1.75 }}>{f.desc}</p>
             </div>
           ))}
         </div>
@@ -544,7 +544,7 @@ const ExplorePlaces = () => (
             }}>
               Explore Places
             </h2>
-            <p style={{ color: "var(--muted)", marginTop: "0.5rem" }}>Three of Kerala's most unforgettable destinations.</p>
+            <p style={{ color: "#666", marginTop: "0.5rem" }}>Three of Kerala's most unforgettable destinations.</p>
           </div>
           <a href="#" style={{ color: "var(--green-accent)", fontWeight: 500, textDecoration: "none", fontSize: "0.9rem" }}>
             View all destinations →
@@ -586,7 +586,7 @@ const ExplorePlaces = () => (
               <h3 className="font-display" style={{ fontSize: "1.45rem", fontWeight: 700, color: colors.dark, marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
                 {place.name}
               </h3>
-              <p style={{ fontSize: "0.875rem", color: "var(--muted)", lineHeight: 1.7, marginBottom: "1.25rem" }}>
+              <p style={{ fontSize: "0.875rem", color: "#555", lineHeight: 1.7, marginBottom: "1.25rem" }}>
                 {place.desc}
               </p>
             <button style={{
@@ -654,7 +654,7 @@ const FeaturedGuides = ({ onBookNow }) => (
         }}>
           Meet Your Guides
         </h2>
-        <p style={{ color: "var(--muted)", maxWidth: 440, margin: "0 auto" }}>
+        <p style={{ color: "#666", maxWidth: 440, margin: "0 auto" }}>
           Our first cohort of early-access guides — verified locals ready to show you Kerala before the crowds arrive.
         </p>
       </div>
@@ -681,7 +681,7 @@ const FeaturedGuides = ({ onBookNow }) => (
                 <p style={{ fontSize: "0.72rem", color: "var(--green-accent)", fontWeight: 500, marginBottom: "0.2rem", display: "flex", alignItems: "center", gap: 4 }}>
                   <span>✔</span> Identity Verified
                 </p>
-                <p style={{ fontSize: "0.8rem", color: "var(--muted)", marginBottom: "0.25rem" }}>📍 {g.location}</p>
+                <p style={{ fontSize: "0.8rem", color: "#666", marginBottom: "0.25rem" }}>📍 {g.location}</p>
                 <span className="pill" style={{ fontSize: "0.7rem" }}>{g.specialty}</span>
               </div>
             </div>
@@ -694,11 +694,11 @@ const FeaturedGuides = ({ onBookNow }) => (
               }}>
                 Early Guide
               </span>
-              <span style={{ fontSize: "0.8rem", color: "var(--muted)" }}>New · Recently Joined</span>
+              <span style={{ fontSize: "0.8rem", color: "#999" }}>New · Recently Joined</span>
             </div>
 
             <div style={{ marginBottom: "1.25rem" }}>
-              <p style={{ fontSize: "0.75rem", color: "var(--muted)", marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>Speaks</p>
+              <p style={{ fontSize: "0.75rem", color: "#999", marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>Speaks</p>
               <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
                 {g.langs.map(l => (
                   <span key={l} style={{
@@ -729,10 +729,11 @@ const FeaturedGuides = ({ onBookNow }) => (
                 fontWeight: 600,
                 cursor: "pointer",
                 boxShadow: `0 4px 12px ${colors.primary}4d`,
-                 transition: "transform 0.2s",
+                transition: "all 0.2s",
+                transform: "scale(1)",
               }}
-                onMouseEnter={e => e.currentTarget.style.transform = "scale(1.04)"}
-                onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+                onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.05)"; e.currentTarget.style.boxShadow = `0 6px 16px ${colors.primary}66`; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 12px ${colors.primary}4d`; }}
               >
                 Book Now
               </button>
