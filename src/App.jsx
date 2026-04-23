@@ -11,6 +11,53 @@ const colors = {
   text: "#212529"
 };
 
+const createTheme = (darkMode) =>
+  darkMode
+    ? {
+        isDark: true,
+        bg: "#0f172a",
+        surface: "#1e293b",
+        surfaceAlt: "#020617",
+        text: "#e2e8f0",
+        muted: "#94a3b8",
+        softText: "#cbd5e1",
+        border: "1px solid rgba(255,255,255,0.05)",
+        strongBorder: "1px solid rgba(116,198,157,0.2)",
+        cardShadow: "0 10px 30px rgba(0,0,0,0.5)",
+        navBg: "rgba(15,23,42,0.95)",
+        navText: "#e2e8f0",
+        toggleBg: "#334155",
+        toggleText: "#ffffff",
+        chipBg: "#334155",
+        chipText: "#e2e8f0",
+        accentSurface: "rgba(82,183,136,0.15)",
+        guideBackdrop: "linear-gradient(180deg, #0f172a 0%, #020617 100%)",
+        inputBg: "#0f172a",
+        inputBorder: "1px solid rgba(148,163,184,0.2)",
+      }
+    : {
+        isDark: false,
+        bg: "#ffffff",
+        surface: "#ffffff",
+        surfaceAlt: "var(--cream)",
+        text: "#111111",
+        muted: "#555",
+        softText: "#666",
+        border: "1px solid rgba(0,0,0,0.05)",
+        strongBorder: "1px solid rgba(45,106,79,0.06)",
+        cardShadow: "0 10px 30px rgba(0,0,0,0.08)",
+        navBg: "rgba(255,255,255,0.92)",
+        navText: "var(--charcoal)",
+        toggleBg: "#e2e8f0",
+        toggleText: "#111111",
+        chipBg: "#f3f4f6",
+        chipText: "#374151",
+        accentSurface: "var(--green-pale)",
+        guideBackdrop: "linear-gradient(180deg, var(--green-pale) 0%, var(--cream) 100%)",
+        inputBg: "#ffffff",
+        inputBorder: "1px solid rgba(0,0,0,0.08)",
+      };
+
 // ─── Fonts (injected via style tag) ────────────────────────────────────────
 const FontStyle = () => (
   <style>{`
@@ -130,9 +177,11 @@ const FontStyle = () => (
 );
 
 // ─── Navbar ─────────────────────────────────────────────────────────────────
-const Navbar = () => {
+const Navbar = ({ theme, onToggleTheme }) => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const navTextColor = scrolled ? theme.navText : "rgba(255,255,255,0.88)";
+  const menuLineColor = scrolled ? theme.navText : "white";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -145,7 +194,7 @@ const Navbar = () => {
       style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
         padding: "0 2rem",
-        background: scrolled ? "rgba(255,255,255,0.92)" : "transparent",
+        background: scrolled ? theme.navBg : "transparent",
         borderBottom: scrolled ? "1px solid rgba(45,106,79,0.1)" : "none",
         transition: "background 0.4s ease, border 0.4s ease",
       }}
@@ -170,8 +219,8 @@ const Navbar = () => {
           </div>
           <span className="font-display" style={{
             fontSize: "1.5rem", fontWeight: 700, letterSpacing: "-0.01em",
-            color: scrolled ? "var(--green-deep)" : "white",
-            transition: "color 0.3s",
+            color: scrolled ? theme.navText : "white",
+            transition: "color 0.3s ease",
           }}>
             Hirevoy
           </span>
@@ -182,16 +231,35 @@ const Navbar = () => {
           {["Home", "Destinations", "Guides", "Contact"].map(link => (
             <a key={link} href="#" style={{
               fontSize: "0.9rem", fontWeight: 500,
-              color: scrolled ? "var(--charcoal)" : "rgba(255,255,255,0.88)",
+              color: navTextColor,
               textDecoration: "none", letterSpacing: "0.02em",
-              transition: "color 0.2s",
+              transition: "color 0.2s ease",
             }}
-              onMouseEnter={e => e.target.style.color = "var(--green-accent)"}
-              onMouseLeave={e => e.target.style.color = scrolled ? "var(--charcoal)" : "rgba(255,255,255,0.88)"}
+              onMouseEnter={e => e.currentTarget.style.color = "var(--green-accent)"}
+              onMouseLeave={e => e.currentTarget.style.color = navTextColor}
             >
               {link}
             </a>
           ))}
+          <button
+            onClick={onToggleTheme}
+            style={{
+              marginRight: "1rem",
+              padding: "6px 12px",
+              borderRadius: "8px",
+              border: "none",
+              cursor: "pointer",
+              background: theme.toggleBg,
+              color: theme.toggleText,
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              transition: "background 0.2s ease, color 0.2s ease, opacity 0.2s ease",
+            }}
+            onMouseEnter={e => e.currentTarget.style.opacity = "0.8"}
+            onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+          >
+            {theme.isDark ? "☀️ Light" : "🌙 Dark"}
+          </button>
           <button style={{
             background: `linear-gradient(135deg, ${colors.primary}, ${colors.accent})`,
             color: "white", border: "none", borderRadius: 99,
@@ -214,9 +282,9 @@ const Navbar = () => {
           className="md:hidden"
           aria-label="Menu"
         >
-          <div style={{ width: 22, height: 2, background: scrolled ? "var(--charcoal)" : "white", marginBottom: 5, transition: "background 0.3s" }} />
-          <div style={{ width: 22, height: 2, background: scrolled ? "var(--charcoal)" : "white", marginBottom: 5, transition: "background 0.3s" }} />
-          <div style={{ width: 14, height: 2, background: scrolled ? "var(--charcoal)" : "white", transition: "background 0.3s" }} />
+          <div style={{ width: 22, height: 2, background: menuLineColor, marginBottom: 5, transition: "background 0.3s ease" }} />
+          <div style={{ width: 22, height: 2, background: menuLineColor, marginBottom: 5, transition: "background 0.3s ease" }} />
+          <div style={{ width: 14, height: 2, background: menuLineColor, transition: "background 0.3s ease" }} />
         </button>
       </div>
     </nav>
@@ -355,7 +423,7 @@ const Hero = () => (
 );
 
 // ─── Value Proposition ──────────────────────────────────────────────────────
-const ValueProp = () => {
+const ValueProp = ({ theme }) => {
   const features = [
     { icon: "🗺️", title: "Hidden Local Spots", desc: "Skip the tour buses. Your guide knows the secret beaches, ancient temples, and viewpoints that aren't on any map." },
     { icon: "🍛", title: "Authentic Food Experiences", desc: "Eat where locals eat. From toddy shops to rooftop fish curries — real Kerala on your plate." },
@@ -364,17 +432,22 @@ const ValueProp = () => {
   ];
 
   return (
-    <section style={{ background: "white", padding: "6rem 2rem" }}>
+    <section style={{
+      background: theme.bg,
+      padding: "6rem 2rem",
+      color: theme.text,
+      transition: "background 0.3s ease, color 0.3s ease",
+    }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: "4rem" }}>
           <div className="section-line" />
           <h2 className="font-display" style={{
             fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 600,
-            color: colors.dark, letterSpacing: "-0.02em", marginBottom: "0.75rem",
+            color: theme.text, letterSpacing: "-0.02em", marginBottom: "0.75rem",
           }}>
             Skip the Tourist Traps
           </h2>
-          <p style={{ color: "#555", maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>
+          <p style={{ color: theme.muted, maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>
             Real travel is messy, unplanned, and deeply human. Hirevoy connects you to people who live it every day.
           </p>
         </div>
@@ -385,12 +458,13 @@ const ValueProp = () => {
         }}>
           {features.map((f, i) => (
             <div key={i} className="card-hover" style={{
-              background: "white", borderRadius: 20,
+              background: theme.surface, borderRadius: 20,
               padding: "2rem 1.75rem",
-              border: "1px solid rgba(0,0,0,0.05)",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+              border: theme.border,
+              boxShadow: theme.cardShadow,
+              color: theme.text,
               transform: "translateY(0)",
-              transition: "all 0.25s ease",
+              transition: "background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease",
             }}
               onMouseEnter={e => e.currentTarget.style.transform = "translateY(-8px)"}
               onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
@@ -398,13 +472,13 @@ const ValueProp = () => {
               <div style={{
                 fontSize: "1.75rem", marginBottom: "1rem",
                 width: 52, height: 52, borderRadius: 14,
-                background: "var(--green-pale)",
+                background: theme.accentSurface,
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
                 {f.icon}
               </div>
-              <h3 style={{ fontWeight: 700, fontSize: "1.05rem", color: colors.text, marginBottom: "0.5rem" }}>{f.title}</h3>
-              <p style={{ fontSize: "0.875rem", color: "#555", lineHeight: 1.75 }}>{f.desc}</p>
+              <h3 style={{ fontWeight: 700, fontSize: "1.05rem", color: theme.text, marginBottom: "0.5rem" }}>{f.title}</h3>
+              <p style={{ fontSize: "0.875rem", color: theme.softText, lineHeight: 1.75 }}>{f.desc}</p>
             </div>
           ))}
         </div>
@@ -413,7 +487,6 @@ const ValueProp = () => {
   );
 };
 
-// ─── How It Works ───────────────────────────────────────────────────────────
 const HowItWorks = () => {
   const steps = [
     { num: "01", title: "Choose Your Destination", desc: "Browse Kerala's finest destinations — from Munnar's tea gardens to Kochi's colonial streets. Pick where you want to go.", icon: "📍" },
@@ -423,20 +496,21 @@ const HowItWorks = () => {
 
   return (
     <section style={{
-      background: `linear-gradient(180deg, ${colors.light} 0%, white 100%)`,
+      background: "#0f172a",
       padding: "6rem 2rem",
       position: "relative", overflow: "hidden",
+      color: "white",
     }}>
       {/* Background decoration */}
       <div style={{
         position: "absolute", top: -120, right: -120,
         width: 400, height: 400, borderRadius: "50%",
-        background: "rgba(64,145,108,0.12)",
+        background: "rgba(64,145,108,0.08)",
       }} />
       <div style={{
         position: "absolute", bottom: -80, left: -80,
         width: 280, height: 280, borderRadius: "50%",
-        background: "rgba(116,198,157,0.08)",
+        background: "rgba(116,198,157,0.05)",
       }} />
 
       <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative" }}>
@@ -448,7 +522,7 @@ const HowItWorks = () => {
           }}>
             How It Works
           </h2>
-          <p style={{ color: "rgba(255,255,255,0.6)", maxWidth: 400, margin: "0 auto" }}>
+          <p style={{ color: "#cbd5e1", maxWidth: 400, margin: "0 auto" }}>
             Three steps from your couch to a real Kerala adventure.
           </p>
         </div>
@@ -459,25 +533,33 @@ const HowItWorks = () => {
         }}>
           {steps.map((step, i) => (
             <div key={i} style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(116,198,157,0.15)",
-              borderRadius: 24, padding: "2.5rem 2rem",
+              background: "#1e293b",
+              border: "1px solid rgba(116,198,157,0.2)",
+              borderRadius: 16, padding: "2rem",
               backdropFilter: "blur(8px)",
-              transition: "background 0.3s",
+              transition: "background 0.3s, transform 0.3s",
+              color: "#e2e8f0",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
             }}
-              onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.09)"}
-              onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = "#334155";
+                e.currentTarget.style.transform = "translateY(-4px)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = "#1e293b";
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
                 <span className="font-display" style={{
                   fontSize: "2.5rem", fontWeight: 700,
-                  color: "rgba(116,198,157,0.3)", lineHeight: 1,
+                  color: "var(--green-light)", lineHeight: 1,
                 }}>
                   {step.num}
                 </span>
                 <div style={{
                   width: 44, height: 44, borderRadius: 12,
-                  background: "rgba(64,145,108,0.3)",
+                  background: "rgba(64,145,108,0.2)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: "1.3rem",
                 }}>
@@ -487,7 +569,7 @@ const HowItWorks = () => {
               <h3 style={{ fontSize: "1.1rem", fontWeight: 600, color: "white", marginBottom: "0.75rem" }}>
                 {step.title}
               </h3>
-              <p style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.75 }}>
+              <p style={{ fontSize: "0.875rem", color: "#cbd5e1", lineHeight: 1.75 }}>
                 {step.desc}
               </p>
 
@@ -531,8 +613,13 @@ const places = [
   },
 ];
 
-const ExplorePlaces = () => (
-  <section style={{ padding: "7rem 2rem", background: "var(--cream)" }}>
+const ExplorePlaces = ({ theme }) => (
+  <section style={{
+    padding: "7rem 2rem",
+    background: theme.surfaceAlt,
+    color: theme.text,
+    transition: "background 0.3s ease, color 0.3s ease",
+  }}>
     <div style={{ maxWidth: 1100, margin: "0 auto" }}>
       <div style={{ marginBottom: "3.5rem" }}>
         <div className="section-line" style={{ margin: "0 0 1.25rem" }} />
@@ -540,11 +627,11 @@ const ExplorePlaces = () => (
           <div>
             <h2 className="font-display" style={{
               fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 600,
-              color: "var(--green-deep)", letterSpacing: "-0.02em",
+              color: theme.text, letterSpacing: "-0.02em",
             }}>
               Explore Places
             </h2>
-            <p style={{ color: "#666", marginTop: "0.5rem" }}>Three of Kerala's most unforgettable destinations.</p>
+            <p style={{ color: theme.muted, marginTop: "0.5rem" }}>Three of Kerala's most unforgettable destinations.</p>
           </div>
           <a href="#" style={{ color: "var(--green-accent)", fontWeight: 500, textDecoration: "none", fontSize: "0.9rem" }}>
             View all destinations →
@@ -559,9 +646,10 @@ const ExplorePlaces = () => (
         {places.map((place, i) => (
           <div key={i} className="card-hover" style={{
             borderRadius: 24, overflow: "hidden",
-            background: "white",
-            boxShadow: "0 2px 20px rgba(26,60,46,0.08)",
-            border: "1px solid rgba(45,106,79,0.06)",
+            background: theme.surface,
+            boxShadow: theme.cardShadow,
+            border: theme.strongBorder,
+            transition: "background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease",
           }}>
             <div style={{ position: "relative", height: 220, overflow: "hidden" }}>
               <img
@@ -583,10 +671,10 @@ const ExplorePlaces = () => (
               </div>
             </div>
             <div style={{ padding: "1.5rem" }}>
-              <h3 className="font-display" style={{ fontSize: "1.45rem", fontWeight: 700, color: colors.dark, marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
+              <h3 className="font-display" style={{ fontSize: "1.45rem", fontWeight: 700, color: theme.text, marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
                 {place.name}
               </h3>
-              <p style={{ fontSize: "0.875rem", color: "#555", lineHeight: 1.7, marginBottom: "1.25rem" }}>
+              <p style={{ fontSize: "0.875rem", color: theme.softText, lineHeight: 1.7, marginBottom: "1.25rem" }}>
                 {place.desc}
               </p>
             <button style={{
@@ -640,21 +728,23 @@ const guides = [
     },
 ];
 
-const FeaturedGuides = ({ onBookNow }) => (
+const FeaturedGuides = ({ theme, onBookNow }) => (
   <section id="guides" style={{
     padding: "7rem 2rem",
-    background: "linear-gradient(180deg, var(--green-pale) 0%, var(--cream) 100%)",
+    background: theme.guideBackdrop,
+    color: theme.text,
+    transition: "background 0.3s ease, color 0.3s ease",
   }}>
     <div style={{ maxWidth: 1100, margin: "0 auto" }}>
       <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
         <div className="section-line" />
         <h2 className="font-display" style={{
           fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 700, letterSpacing: "-0.02em",
-          color: colors.dark, marginBottom: "0.75rem",
+          color: theme.text, marginBottom: "0.75rem",
         }}>
           Meet Your Guides
         </h2>
-        <p style={{ color: "#666", maxWidth: 440, margin: "0 auto" }}>
+        <p style={{ color: theme.muted, maxWidth: 440, margin: "0 auto" }}>
           Our first cohort of early-access guides — verified locals ready to show you Kerala before the crowds arrive.
         </p>
       </div>
@@ -665,23 +755,24 @@ const FeaturedGuides = ({ onBookNow }) => (
       }}>
         {guides.map((g, i) => (
           <div key={i} className="card-hover" style={{
-            background: "white", borderRadius: 24,
+            background: theme.surface, borderRadius: 24,
             padding: "2rem",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-            border: "1px solid rgba(0,0,0,0.05)",
+            boxShadow: theme.cardShadow,
+            border: theme.border,
+            color: theme.text,
             transform: "translateY(0)",
-            transition: "all 0.25s ease",
+            transition: "background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease",
           }}
             onMouseEnter={e => e.currentTarget.style.transform = "translateY(-8px)"}
             onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
           >
             <div style={{ display: "flex", gap: "1rem", marginBottom: "1.25rem" }}>
               <div>
-                <h3 style={{ fontWeight: 600, fontSize: "1.05rem", color: "var(--charcoal)" }}>{g.name}</h3>
+                <h3 style={{ fontWeight: 600, fontSize: "1.05rem", color: theme.text }}>{g.name}</h3>
                 <p style={{ fontSize: "0.72rem", color: "var(--green-accent)", fontWeight: 500, marginBottom: "0.2rem", display: "flex", alignItems: "center", gap: 4 }}>
                   <span>✔</span> Identity Verified
                 </p>
-                <p style={{ fontSize: "0.8rem", color: "#666", marginBottom: "0.25rem" }}>📍 {g.location}</p>
+                <p style={{ fontSize: "0.8rem", color: theme.muted, marginBottom: "0.25rem" }}>📍 {g.location}</p>
                 <span className="pill" style={{ fontSize: "0.7rem" }}>{g.specialty}</span>
               </div>
             </div>
@@ -694,15 +785,15 @@ const FeaturedGuides = ({ onBookNow }) => (
               }}>
                 Early Guide
               </span>
-              <span style={{ fontSize: "0.8rem", color: "#999" }}>New · Recently Joined</span>
+              <span style={{ fontSize: "0.8rem", color: theme.muted }}>New · Recently Joined</span>
             </div>
 
             <div style={{ marginBottom: "1.25rem" }}>
-              <p style={{ fontSize: "0.75rem", color: "#999", marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>Speaks</p>
+              <p style={{ fontSize: "0.75rem", color: theme.muted, marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>Speaks</p>
               <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
                 {g.langs.map(l => (
                   <span key={l} style={{
-                    background: "#f3f4f6", color: "#374151",
+                    background: theme.chipBg, color: theme.chipText,
                     fontSize: "0.75rem", padding: "3px 10px", borderRadius: 99,
                   }}>
                     {l}
@@ -746,7 +837,7 @@ const FeaturedGuides = ({ onBookNow }) => (
 );
 
 // ─── Trust Section ──────────────────────────────────────────────────────────
-const TrustSection = () => {
+const TrustSection = ({ theme }) => {
   const items = [
     { icon: "🔍", title: "Background Verified", desc: "Every guide undergoes a thorough police verification and identity check before joining Hirevoy." },
     { icon: "🪪", title: "ID Authenticated", desc: "Government-issued ID verification ensures you always know who's guiding you." },
@@ -755,7 +846,12 @@ const TrustSection = () => {
   ];
 
   return (
-    <section style={{ padding: "6rem 2rem", background: "white" }}>
+    <section style={{
+      padding: "6rem 2rem",
+      background: theme.bg,
+      color: theme.text,
+      transition: "background 0.3s ease, color 0.3s ease",
+    }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <div style={{
           display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem",
@@ -766,11 +862,11 @@ const TrustSection = () => {
             <div className="section-line" style={{ margin: "0 0 1.5rem" }} />
             <h2 className="font-display" style={{
               fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, letterSpacing: "-0.02em",
-              color: colors.dark, marginBottom: "1rem",
+              color: theme.text, marginBottom: "1rem",
             }}>
               Your Safety<br />Matters to Us
             </h2>
-            <p style={{ color: colors.text, lineHeight: 1.8, marginBottom: "2rem", maxWidth: 380 }}>
+            <p style={{ color: theme.muted, lineHeight: 1.8, marginBottom: "2rem", maxWidth: 380 }}>
               We don't just list guides — we vet them. Every person on Hirevoy has passed our safety checks, so you can focus on the experience.
             </p>
             <button style={{
@@ -791,9 +887,11 @@ const TrustSection = () => {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             {items.map((item, i) => (
               <div key={i} style={{
-                background: i % 2 === 0 ? "var(--green-pale)" : "var(--green-deep)",
+                background: theme.isDark ? theme.surface : (i % 2 === 0 ? "var(--green-pale)" : "var(--green-deep)"),
                 borderRadius: 20, padding: "1.5rem",
-                transition: "transform 0.3s",
+                border: theme.isDark ? theme.border : "none",
+                boxShadow: theme.isDark ? theme.cardShadow : "none",
+                transition: "background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease",
               }}
                 onMouseEnter={e => e.currentTarget.style.transform = "scale(1.02)"}
                 onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
@@ -801,13 +899,13 @@ const TrustSection = () => {
                 <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>{item.icon}</div>
                 <h4 style={{
                   fontSize: "0.9rem", fontWeight: 600, marginBottom: "0.4rem",
-                  color: i % 2 === 0 ? "var(--green-deep)" : "white",
+                  color: theme.isDark ? theme.text : (i % 2 === 0 ? "var(--green-deep)" : "white"),
                 }}>
                   {item.title}
                 </h4>
                 <p style={{
                   fontSize: "0.78rem", lineHeight: 1.65,
-                  color: i % 2 === 0 ? "var(--muted)" : "rgba(255,255,255,0.6)",
+                  color: theme.isDark ? theme.softText : (i % 2 === 0 ? "var(--muted)" : "rgba(255,255,255,0.6)"),
                 }}>
                   {item.desc}
                 </p>
@@ -1049,6 +1147,7 @@ const Footer = () => (
 
 // ─── App ─────────────────────────────────────────────────────────────────────
 export default function App() {
+  const [darkMode, setDarkMode] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -1056,18 +1155,36 @@ export default function App() {
     message: ""
   });
   const [error, setError] = useState("");
+  const theme = createTheme(darkMode);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark") setDarkMode(true);
+    if (saved === "light") setDarkMode(false);
+  }, []);
+
+  const handleThemeToggle = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    localStorage.setItem("theme", newMode ? "dark" : "light");
+  };
 
   return (
-    <>
+    <div style={{
+      background: theme.bg,
+      color: theme.text,
+      minHeight: "100vh",
+      transition: "all 0.3s ease",
+    }}>
       <FontStyle />
-      <Navbar />
+      <Navbar theme={theme} onToggleTheme={handleThemeToggle} />
       <main>
         <Hero />
-        <ValueProp />
+        <ValueProp theme={theme} />
         <HowItWorks />
-        <ExplorePlaces />
-        <FeaturedGuides onBookNow={() => setShowForm(true)} />
-        <TrustSection />
+        <ExplorePlaces theme={theme} />
+        <FeaturedGuides theme={theme} onBookNow={() => setShowForm(true)} />
+        <TrustSection theme={theme} />
         <FinalCTA />
       </main>
       <Footer />
@@ -1120,30 +1237,58 @@ export default function App() {
           zIndex: 9999,
         }}>
           <div style={{
-            background: "white",
+            background: theme.surface,
+            color: theme.text,
             padding: "30px",
             borderRadius: "12px",
             width: "90%",
             maxWidth: "400px",
+            border: theme.border,
+            boxShadow: theme.cardShadow,
+            transition: "background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease",
           }}>
             <h2>Request a Guide</h2>
             <input
               placeholder="Your Name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              style={{ width: "100%", marginBottom: "10px", padding: "10px" }}
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                padding: "10px",
+                borderRadius: "8px",
+                border: theme.inputBorder,
+                background: theme.inputBg,
+                color: theme.text,
+              }}
             />
             <input
               placeholder="Location"
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              style={{ width: "100%", marginBottom: "10px", padding: "10px" }}
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                padding: "10px",
+                borderRadius: "8px",
+                border: theme.inputBorder,
+                background: theme.inputBg,
+                color: theme.text,
+              }}
             />
             <textarea
               placeholder="Tell us what you want to explore (food, places, etc.)"
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              style={{ width: "100%", marginBottom: "10px", padding: "10px" }}
+              style={{
+                width: "100%",
+                marginBottom: "10px",
+                padding: "10px",
+                borderRadius: "8px",
+                border: theme.inputBorder,
+                background: theme.inputBg,
+                color: theme.text,
+              }}
             />
             {error && (
               <p style={{ color: "red", marginBottom: "10px" }}>
@@ -1192,7 +1337,7 @@ I need: ${formData.message}`;
                 marginTop: "10px",
                 background: "none",
                 border: "none",
-                color: "gray",
+                color: theme.muted,
                 cursor: "pointer",
               }}
             >
@@ -1201,6 +1346,6 @@ I need: ${formData.message}`;
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
