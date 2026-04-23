@@ -1,1120 +1,1799 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-// ─── Color System ──────────────────────────────────────────────────────────
-const colors = {
-  primary: "#2d6a4f",
-  accent: "#52b788",
-  light: "#d8f3dc",
-  dark: "#1b4332",
-  highlight: "#74c69d",
-  neutral: "#f8f9fa",
-  text: "#212529"
+const themes = {
+  dark: {
+    bg: "#020617",
+    surface: "#0f172a",
+    card: "#1e293b",
+    text: "#e2e8f0",
+    muted: "#94a3b8",
+    accent: "#22c55e",
+    accentStrong: "#16a34a",
+    accentSoft: "rgba(34,197,94,0.12)",
+    border: "rgba(148,163,184,0.16)",
+    glass: "rgba(15,23,42,0.72)",
+    shadow: "0 10px 30px rgba(0,0,0,0.2)",
+    shadowHover: "0 18px 40px rgba(0,0,0,0.28)",
+    heroOverlay:
+      "linear-gradient(135deg, rgba(2,6,23,0.84) 0%, rgba(15,23,42,0.58) 52%, rgba(34,197,94,0.22) 100%)",
+    footerBg: "#03120a",
+    footerText: "rgba(226,232,240,0.72)",
+    footerHeading: "#f8fafc",
+    inputBg: "#0b1220",
+    inputBorder: "rgba(148,163,184,0.22)",
+    ctaBg:
+      "linear-gradient(135deg, rgba(3,18,10,0.98) 0%, rgba(15,23,42,0.98) 100%)",
+    ctaText: "#f8fafc",
+    ctaMuted: "rgba(226,232,240,0.72)",
+    ctaGhostBorder: "rgba(226,232,240,0.22)",
+    pillBg: "rgba(34,197,94,0.14)",
+    pillText: "#bbf7d0",
+    heroStatBg: "rgba(15,23,42,0.7)",
+    heroStatText: "rgba(248,250,252,0.78)",
+    ghostBg: "rgba(255,255,255,0.08)",
+    ghostBorder: "rgba(255,255,255,0.18)",
+    ghostText: "#f8fafc",
+    modalBackdrop: "rgba(2,6,23,0.72)",
+  },
+  light: {
+    bg: "#ffffff",
+    surface: "#f8fafc",
+    card: "#ffffff",
+    text: "#0f172a",
+    muted: "#475569",
+    accent: "#16a34a",
+    accentStrong: "#15803d",
+    accentSoft: "rgba(22,163,74,0.1)",
+    border: "rgba(15,23,42,0.08)",
+    glass: "rgba(255,255,255,0.78)",
+    shadow: "0 10px 30px rgba(15,23,42,0.12)",
+    shadowHover: "0 18px 40px rgba(15,23,42,0.18)",
+    heroOverlay:
+      "linear-gradient(135deg, rgba(15,23,42,0.72) 0%, rgba(15,23,42,0.36) 52%, rgba(22,163,74,0.26) 100%)",
+    footerBg: "#ecfdf5",
+    footerText: "#475569",
+    footerHeading: "#0f172a",
+    inputBg: "#ffffff",
+    inputBorder: "rgba(15,23,42,0.12)",
+    ctaBg: "linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)",
+    ctaText: "#052e16",
+    ctaMuted: "#166534",
+    ctaGhostBorder: "rgba(5,46,22,0.18)",
+    pillBg: "rgba(22,163,74,0.12)",
+    pillText: "#166534",
+    heroStatBg: "rgba(255,255,255,0.82)",
+    heroStatText: "#0f172a",
+    ghostBg: "rgba(255,255,255,0.12)",
+    ghostBorder: "rgba(255,255,255,0.28)",
+    ghostText: "#f8fafc",
+    modalBackdrop: "rgba(15,23,42,0.56)",
+  },
 };
 
-const createTheme = (darkMode) =>
-  darkMode
-    ? {
-        isDark: true,
-        bg: "#0f172a",
-        surface: "#1e293b",
-        surfaceAlt: "#020617",
-        text: "#e2e8f0",
-        muted: "#94a3b8",
-        softText: "#cbd5e1",
-        border: "1px solid rgba(255,255,255,0.05)",
-        strongBorder: "1px solid rgba(116,198,157,0.2)",
-        cardShadow: "0 10px 30px rgba(0,0,0,0.5)",
-        navBg: "rgba(15,23,42,0.95)",
-        navText: "#e2e8f0",
-        toggleBg: "#334155",
-        toggleText: "#ffffff",
-        chipBg: "#334155",
-        chipText: "#e2e8f0",
-        accentSurface: "rgba(82,183,136,0.15)",
-        guideBackdrop: "linear-gradient(180deg, #0f172a 0%, #020617 100%)",
-        inputBg: "#0f172a",
-        inputBorder: "1px solid rgba(148,163,184,0.2)",
-      }
-    : {
-        isDark: false,
-        bg: "#ffffff",
-        surface: "#ffffff",
-        surfaceAlt: "var(--cream)",
-        text: "#111111",
-        muted: "#555",
-        softText: "#666",
-        border: "1px solid rgba(0,0,0,0.05)",
-        strongBorder: "1px solid rgba(45,106,79,0.06)",
-        cardShadow: "0 10px 30px rgba(0,0,0,0.08)",
-        navBg: "rgba(255,255,255,0.92)",
-        navText: "var(--charcoal)",
-        toggleBg: "#e2e8f0",
-        toggleText: "#111111",
-        chipBg: "#f3f4f6",
-        chipText: "#374151",
-        accentSurface: "var(--green-pale)",
-        guideBackdrop: "linear-gradient(180deg, var(--green-pale) 0%, var(--cream) 100%)",
-        inputBg: "#ffffff",
-        inputBorder: "1px solid rgba(0,0,0,0.08)",
-      };
+const heroImage =
+  "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=1800&auto=format&fit=crop";
 
-// ─── Fonts (injected via style tag) ────────────────────────────────────────
-const FontStyle = () => (
+const navLinks = [
+  { label: "Home", href: "#home" },
+  { label: "Destinations", href: "#destinations" },
+  { label: "Guides", href: "#guides" },
+  { label: "Contact", href: "#contact" },
+];
+
+const features = [
+  {
+    badge: "Local",
+    title: "Hidden Local Spots",
+    desc: "Skip the tour buses. Your guide knows the secret beaches, ancient temples, and viewpoints that are not on any tourist list.",
+  },
+  {
+    badge: "Food",
+    title: "Authentic Food Experiences",
+    desc: "Eat where locals eat. From toddy shops to rooftop fish curries, you get the real Kerala on your plate.",
+  },
+  {
+    badge: "Culture",
+    title: "Cultural Insights",
+    desc: "Understand what you are seeing. Every ritual, every craft, every face is explained with lived experience.",
+  },
+  {
+    badge: "Trust",
+    title: "Verified Safe Guides",
+    desc: "Every guide is background checked, reviewed, and verified so you can focus on the experience instead of the risk.",
+  },
+];
+
+const steps = [
+  {
+    num: "01",
+    tag: "Browse",
+    title: "Choose Your Destination",
+    desc: "Browse Kerala's finest destinations, from Munnar's tea gardens to Kochi's colonial streets, and pick the kind of trip you want.",
+  },
+  {
+    num: "02",
+    tag: "Compare",
+    title: "Select Your Guide",
+    desc: "Filter by language, specialty, budget, and reviews so you can choose a guide that matches your travel style.",
+  },
+  {
+    num: "03",
+    tag: "Confirm",
+    title: "Book Instantly",
+    desc: "Confirm in seconds with secure payment, instant confirmation, and a direct line to your guide before the trip starts.",
+  },
+];
+
+const places = [
+  {
+    name: "Fort Kochi",
+    tag: "Heritage and Culture",
+    desc: "Wander Dutch cemeteries, Chinese fishing nets at sunrise, and spice markets that still smell like the 1500s.",
+    img: "https://images.unsplash.com/photo-1609920658906-8223bd289001?w=800&auto=format&fit=crop",
+    guides: 84,
+  },
+  {
+    name: "Paravoor",
+    tag: "Hills and Tea Gardens",
+    desc: "Endless emerald tea estates, rolling mist, elephant sightings, and cardamom scented air high above the plains.",
+    img: "https://images.unsplash.com/photo-1587653915936-d8d30a22e079?w=800&auto=format&fit=crop",
+    guides: 62,
+  },
+  {
+    name: "Cherai",
+    tag: "Backwaters and Villages",
+    desc: "Glide through a web of canals, sleep on a houseboat, and watch village life unfold on the water.",
+    img: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&auto=format&fit=crop&crop=center",
+    guides: 97,
+  },
+];
+
+const guides = [
+  {
+    name: "Abishek Rajan",
+    location: "Fort Kochi",
+    langs: ["English", "Malayalam", "Hindi"],
+    specialty: "Heritage and History",
+  },
+  {
+    name: "Eldho Sibi",
+    location: "Munnar",
+    langs: ["English", "Malayalam", "Tamil"],
+    specialty: "Nature and Wildlife",
+  },
+  {
+    name: "Parvathy",
+    location: "Alleppey",
+    langs: ["English", "Malayalam"],
+    specialty: "Backwaters and Villages",
+  },
+];
+
+const trustItems = [
+  {
+    label: "BG",
+    title: "Background Verified",
+    desc: "Every guide goes through identity and background verification before they appear on Hirevoy.",
+  },
+  {
+    label: "ID",
+    title: "ID Authenticated",
+    desc: "Government issued identity is reviewed so travelers always know who they are meeting.",
+  },
+  {
+    label: "SSL",
+    title: "Secure Booking",
+    desc: "Encrypted payments, clear pricing, and transparent cancellation handling keep the booking flow safe.",
+  },
+  {
+    label: "REV",
+    title: "Ratings and Reviews",
+    desc: "Every review comes from a real booking so trust signals stay useful instead of becoming noise.",
+  },
+];
+
+const footerGroups = [
+  ["Explore", ["Destinations", "Find a Guide", "How It Works", "Safety"]],
+  ["Guides", ["Become a Guide", "Guide Dashboard", "Payouts", "Resources"]],
+  ["Company", ["About Us", "Blog", "Careers", "Contact"]],
+];
+
+const heroStats = [
+  ["Launching Soon", "Local Guides"],
+  ["Be the First", "Kerala Destinations"],
+  ["Early Access", "Happy Travelers"],
+  ["Building Trust", "Average Rating"],
+];
+
+const scrollToSection = (id) => {
+  const section = document.getElementById(id);
+  if (section) {
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
+const openWhatsAppMessage = (text) => {
+  const url = `https://wa.me/919778405403?text=${encodeURIComponent(text)}`;
+  window.open(url, "_blank", "noopener,noreferrer");
+};
+
+const AppStyles = ({ theme }) => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+    @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap");
 
     :root {
-      --green-deep: #1a3c2e;
-      --green-mid: #2d6a4f;
-      --green-accent: #40916c;
-      --green-light: #74c69d;
-      --green-pale: #d8f3dc;
-      --cream: #faf9f6;
-      --charcoal: #1c1c1e;
-      --muted: #6b7280;
+      --bg: ${theme.bg};
+      --surface: ${theme.surface};
+      --card: ${theme.card};
+      --text: ${theme.text};
+      --muted: ${theme.muted};
+      --accent: ${theme.accent};
+      --accent-strong: ${theme.accentStrong};
+      --accent-soft: ${theme.accentSoft};
+      --border: ${theme.border};
+      --glass: ${theme.glass};
+      --shadow: ${theme.shadow};
+      --shadow-hover: ${theme.shadowHover};
+      --hero-overlay: ${theme.heroOverlay};
+      --footer-bg: ${theme.footerBg};
+      --footer-text: ${theme.footerText};
+      --footer-heading: ${theme.footerHeading};
+      --input-bg: ${theme.inputBg};
+      --input-border: ${theme.inputBorder};
+      --cta-bg: ${theme.ctaBg};
+      --cta-text: ${theme.ctaText};
+      --cta-muted: ${theme.ctaMuted};
+      --cta-ghost-border: ${theme.ctaGhostBorder};
+      --pill-bg: ${theme.pillBg};
+      --pill-text: ${theme.pillText};
+      --hero-stat-bg: ${theme.heroStatBg};
+      --hero-stat-text: ${theme.heroStatText};
+      --ghost-bg: ${theme.ghostBg};
+      --ghost-border: ${theme.ghostBorder};
+      --ghost-text: ${theme.ghostText};
+      --modal-backdrop: ${theme.modalBackdrop};
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--cream);
-      color: var(--charcoal);
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      background: var(--bg);
+      color: var(--text);
       overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
-    .font-display { font-family: 'Cormorant Garamond', serif; }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-thumb { background: var(--green-accent); border-radius: 3px; }
-
-    /* Fade-up animation */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(32px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-    @keyframes slideRight {
-      from { opacity: 0; transform: translateX(-24px); }
-      to   { opacity: 1; transform: translateX(0); }
+    a,
+    button,
+    input,
+    textarea {
+      font: inherit;
     }
 
-    .anim-fadeup  { animation: fadeUp  0.7s ease forwards; }
-    .anim-fadein  { animation: fadeIn  0.6s ease forwards; }
-    .anim-slide   { animation: slideRight 0.6s ease forwards; }
-
-    .delay-100 { animation-delay: 0.1s; opacity: 0; }
-    .delay-200 { animation-delay: 0.2s; opacity: 0; }
-    .delay-300 { animation-delay: 0.3s; opacity: 0; }
-    .delay-400 { animation-delay: 0.4s; opacity: 0; }
-    .delay-500 { animation-delay: 0.5s; opacity: 0; }
-    .delay-600 { animation-delay: 0.6s; opacity: 0; }
-
-    /* Hover card lift */
-    .card-hover {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .card-hover:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 24px 48px rgba(26,60,46,0.15);
+    button {
+      cursor: pointer;
     }
 
-    /* Pill tag */
-    .pill {
-      display: inline-flex; align-items: center; gap: 4px;
-      background: var(--green-pale); color: var(--green-mid);
-      font-size: 0.75rem; font-weight: 500; letter-spacing: 0.04em;
-      padding: 4px 12px; border-radius: 99px;
+    img {
+      display: block;
+      max-width: 100%;
     }
 
-    /* Nav blur */
-    .nav-blur {
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+    ::selection {
+      background: var(--accent);
+      color: #ffffff;
     }
 
-    /* Green underline */
-    .green-underline {
-      position: relative;
-    }
-    .green-underline::after {
-      content: '';
-      position: absolute;
-      bottom: -4px; left: 0;
-      width: 56px; height: 3px;
-      background: var(--green-accent);
-      border-radius: 2px;
+    ::-webkit-scrollbar {
+      width: 8px;
     }
 
-    /* Star fill */
-    .star-filled { color: #f59e0b; }
-    .star-empty  { color: #d1d5db; }
-
-    /* Image overlay */
-    .img-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(10,30,20,0.85) 0%, rgba(10,30,20,0.2) 60%, transparent 100%);
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 999px;
     }
 
-    /* Section divider */
+    .app-shell {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .font-display {
+      font-family: "Cormorant Garamond", serif;
+    }
+
+    .anchor-section,
+    footer {
+      scroll-margin-top: 110px;
+    }
+
+    .section {
+      padding: 6rem 2rem;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .section-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
     .section-line {
-      width: 56px; height: 3px;
-      background: linear-gradient(90deg, var(--green-accent), var(--green-light));
-      border-radius: 2px;
-      margin: 0 auto 1.5rem;
+      width: 56px;
+      height: 3px;
+      margin: 0 auto 1.25rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), #86efac);
     }
 
-    /* Mobile nav */
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .nav-links.open { display: flex; flex-direction: column; }
+    .section-title {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .section-copy {
+      max-width: 560px;
+      margin: 0.9rem auto 0;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .glass-panel {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      border: 0;
+      border-radius: 999px;
+      padding: 0.95rem 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .button:hover {
+      transform: scale(1.03);
+    }
+
+    .button-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #ffffff;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+    }
+
+    .button-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .button-ghost {
+      background: var(--ghost-bg);
+      color: var(--ghost-text);
+      border: 1px solid var(--ghost-border);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .button-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .lift-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease,
+        border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .lift-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      background: var(--pill-bg);
+      color: var(--pill-text);
+      border: 1px solid var(--border);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .delay-1 {
+      transition-delay: 0.08s;
+    }
+
+    .delay-2 {
+      transition-delay: 0.16s;
+    }
+
+    .delay-3 {
+      transition-delay: 0.24s;
+    }
+
+    .nav-shell {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 1.25rem;
+      transition: padding 0.3s ease;
+    }
+
+    .nav-shell.scrolled {
+      padding-top: 0.8rem;
+      padding-bottom: 0.8rem;
+    }
+
+    .nav-bar {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 1.1rem 0.85rem 1.25rem;
+      border-radius: 24px;
+    }
+
+    .nav-brand {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: inherit;
+      min-width: 0;
+    }
+
+    .logo-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+    }
+
+    .nav-brand__name {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+
+    .nav-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      min-width: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.35rem;
+      margin-left: 1rem;
+      min-width: 0;
+    }
+
+    .nav-link {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      opacity: 0.88;
+      transition: color 0.3s ease, opacity 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--accent);
+      opacity: 1;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-left: auto;
+      flex: 0 0 auto;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.72rem 0.95rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
+    }
+
+    .theme-toggle__dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .nav-mobile-actions {
+      display: none;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .hamburger {
+      width: 46px;
+      height: 46px;
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: all 0.3s ease;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--text);
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .hamburger.open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .mobile-menu {
+      display: none;
+      max-width: 1180px;
+      margin: 0.7rem auto 0;
+      border-radius: 24px;
+      padding: 0.8rem;
+    }
+
+    .mobile-menu.open {
+      display: none;
+    }
+
+    .mobile-menu__links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .mobile-link {
+      display: block;
+      padding: 0.95rem 1rem;
+      border-radius: 16px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .mobile-link:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .mobile-menu__cta {
+      margin-top: 0.75rem;
+      width: 100%;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      padding: 8.5rem 1.5rem 8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-background {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.06);
+      animation: heroZoom 18s ease-in-out infinite alternate;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--hero-overlay);
+    }
+
+    .hero-noise {
+      position: absolute;
+      inset: 0;
+      opacity: 0.05;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .hero-content {
+      max-width: 820px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .hero-title {
+      margin: 1.2rem 0 1rem;
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 600;
+      line-height: 1.06;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      overflow-wrap: anywhere;
+    }
+
+    .hero-title em {
+      color: #bbf7d0;
+      font-style: italic;
+    }
+
+    .hero-copy {
+      max-width: 620px;
+      margin: 0 auto 2.1rem;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      line-height: 1.75;
+      color: rgba(248, 250, 252, 0.8);
+    }
+
+    .hero-scroll {
+      width: 1px;
+      height: 46px;
+      margin: 3.25rem auto 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.55), transparent);
+    }
+
+    .hero-stats-wrap {
+      position: absolute;
+      left: 1.5rem;
+      right: 1.5rem;
+      bottom: 1.35rem;
+      z-index: 1;
+    }
+
+    .hero-stats {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.1rem 1.25rem;
+      border-radius: 24px;
+      background: var(--hero-stat-bg);
+    }
+
+    .hero-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+      text-align: center;
+    }
+
+    .hero-stat__value {
+      color: #bbf7d0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-stat__label {
+      margin-top: 0.2rem;
+      color: var(--hero-stat-text);
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .cards-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .features-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .steps-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .places-grid,
+    .guides-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .feature-card,
+    .step-card,
+    .guide-card,
+    .trust-card {
+      padding: 1.6rem;
+    }
+
+    .feature-badge,
+    .step-tag,
+    .trust-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 52px;
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .feature-title,
+    .step-title,
+    .guide-name,
+    .trust-title {
+      margin: 1rem 0 0.55rem;
+      font-size: 1.08rem;
+      font-weight: 700;
+    }
+
+    .feature-copy,
+    .step-copy,
+    .guide-copy,
+    .trust-copy,
+    .place-copy {
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 0.94rem;
+    }
+
+    .step-number-row {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .step-number {
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--accent);
+      letter-spacing: -0.04em;
+    }
+
+    .place-card {
+      overflow: hidden;
+    }
+
+    .place-media {
+      position: relative;
+      height: 220px;
+      overflow: hidden;
+    }
+
+    .place-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .place-card:hover .place-media img {
+      transform: scale(1.06);
+    }
+
+    .place-media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(2,6,23,0.78), rgba(2,6,23,0.08));
+    }
+
+    .place-chip,
+    .place-count {
+      position: absolute;
+      z-index: 1;
+      border-radius: 999px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.76rem;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .place-chip {
+      top: 1rem;
+      left: 1rem;
+      color: #ffffff;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.12);
+    }
+
+    .place-count {
+      right: 1rem;
+      bottom: 1rem;
+      color: rgba(248,250,252,0.84);
+      background: rgba(2,6,23,0.42);
+    }
+
+    .place-body {
+      padding: 1.5rem;
+    }
+
+    .place-name {
+      margin: 0 0 0.55rem;
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .guide-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 0.8rem;
+    }
+
+    .meta-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      font-size: 0.76rem;
+    }
+
+    .guide-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .guide-verification {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.76rem;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .guide-location,
+    .guide-subtext {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .guide-action {
+      margin-top: 1.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .price-note {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .cta-section {
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      background: var(--cta-bg);
+      color: var(--cta-text);
+    }
+
+    .cta-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(34,197,94,0.22) 0%, transparent 70%);
+    }
+
+    .cta-orb--large {
+      width: 520px;
+      height: 520px;
+      left: 50%;
+      top: -160px;
+      transform: translateX(-50%);
+    }
+
+    .cta-orb--small {
+      width: 220px;
+      height: 220px;
+      right: -70px;
+      bottom: -70px;
+    }
+
+    .cta-copy {
+      max-width: 640px;
+      margin: 0.9rem auto 2rem;
+      color: var(--cta-muted);
+      line-height: 1.75;
+    }
+
+    .cta-ghost {
+      background: transparent;
+      color: var(--cta-text);
+      border: 1px solid var(--cta-ghost-border);
+    }
+
+    .footer {
+      background: var(--footer-bg);
+      color: var(--footer-text);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: minmax(220px, 1.2fr) repeat(3, minmax(140px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .footer-heading {
+      margin: 0 0 0.95rem;
+      color: var(--footer-heading);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .footer-link {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-link:hover {
+      color: var(--accent);
+    }
+
+    .footer-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+      font-size: 0.84rem;
+    }
+
+    .footer-legal {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background: var(--modal-backdrop);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .modal-card {
+      width: min(100%, 460px);
+      padding: 1.6rem;
+      border-radius: 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .modal-title {
+      margin: 0 0 0.45rem;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .modal-copy {
+      margin: 0 0 1.2rem;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.94rem;
+    }
+
+    .field-stack {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 0.95rem 1rem;
+      border-radius: 16px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .field-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .field-input::placeholder {
+      color: var(--muted);
+    }
+
+    .field-input--textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .modal-error {
+      margin: 0.25rem 0 0;
+      color: #ef4444;
+      font-size: 0.9rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 1.2rem;
+    }
+
+    .button-block {
+      width: 100%;
+    }
+
+    .button-disabled,
+    .button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .whatsapp-fab {
+      position: fixed;
+      right: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 120;
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: #ffffff;
+      background: linear-gradient(135deg, #25d366, #1fa955);
+      box-shadow: 0 14px 32px rgba(37, 211, 102, 0.32);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: whatsappPulse 2.5s infinite;
+    }
+
+    .whatsapp-fab:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 18px 38px rgba(37, 211, 102, 0.4);
+    }
+
+    @keyframes heroZoom {
+      from {
+        transform: scale(1.06);
+      }
+      to {
+        transform: scale(1.14);
+      }
+    }
+
+    @keyframes whatsappPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.36);
+      }
+      70% {
+        box-shadow: 0 0 0 18px rgba(37, 211, 102, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .features-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .places-grid,
+      .guides-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 767px) {
+      .section {
+        padding: 4rem 1rem;
+      }
+
+      .nav-main {
+        display: none;
+      }
+
+      .nav-mobile-actions {
+        display: flex;
+      }
+
+      .mobile-menu.open {
+        display: block;
+      }
+
+      .hero {
+        min-height: auto;
+        padding: 7.5rem 1rem 2.5rem;
+      }
+
+      .hero-copy,
+      .section-copy,
+      .section-heading,
+      .split-copy,
+      .footer-brand,
+      .guide-action,
+      .guide-topline,
+      .footer-meta {
+        text-align: center;
+      }
+
+      .hero-stats-wrap {
+        position: static;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        margin-top: 2rem;
+      }
+
+      .hero-stats {
+        padding: 1rem;
+      }
+
+      .button-row,
+      .modal-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .button-row > *,
+      .modal-actions > * {
+        width: 100%;
+      }
+
+      .features-grid,
+      .steps-grid,
+      .places-grid,
+      .guides-grid,
+      .split-grid,
+      .trust-grid,
+      .footer-grid,
+      .hero-stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .guide-topline,
+      .guide-action {
+        justify-content: center;
+      }
+
+      .footer-legal {
+        justify-content: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
     }
   `}</style>
 );
 
-// ─── Navbar ─────────────────────────────────────────────────────────────────
-const Navbar = ({ theme, onToggleTheme }) => {
-  const [scrolled, setScrolled] = useState(false);
+const LogoMark = () => (
+  <div className="logo-mark" aria-hidden="true">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+        fill="white"
+      />
+      <circle cx="12" cy="9" r="2.5" fill="#16a34a" />
+    </svg>
+  </div>
+);
+
+const ThemeToggle = ({ darkMode, onToggle, className = "" }) => (
+  <button
+    type="button"
+    className={`theme-toggle ${className}`.trim()}
+    onClick={onToggle}
+    aria-label={`Switch to ${darkMode ? "light" : "dark"} mode`}
+  >
+    <span className="theme-toggle__dot" />
+    <span>{darkMode ? "Light" : "Dark"}</span>
+  </button>
+);
+
+const Navbar = ({ darkMode, onToggleTheme }) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const navTextColor = scrolled ? theme.navText : "rgba(255,255,255,0.88)";
-  const menuLineColor = scrolled ? theme.navText : "white";
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 24);
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
+  const closeMenu = () => setMenuOpen(false);
+
   return (
-    <nav
-      style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        padding: "0 2rem",
-        background: scrolled ? theme.navBg : "transparent",
-        borderBottom: scrolled ? "1px solid rgba(45,106,79,0.1)" : "none",
-        transition: "background 0.4s ease, border 0.4s ease",
-      }}
-      className="nav-blur"
-    >
-      <div style={{
-        maxWidth: 1200, margin: "0 auto",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        height: 72,
-      }}>
-        {/* Logo */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: "50%",
-            background: "linear-gradient(135deg, #2d6a4f, #40916c)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="white"/>
-              <circle cx="12" cy="9" r="2.5" fill="#2d6a4f"/>
-            </svg>
+    <nav className={`nav-shell ${scrolled ? "scrolled" : ""}`}>
+      <div className="nav-bar glass-panel">
+        <a href="#home" className="nav-brand" onClick={closeMenu}>
+          <LogoMark />
+          <span className="font-display nav-brand__name">Hirevoy</span>
+        </a>
+
+        <div className="nav-main">
+          <div className="nav-links">
+            {navLinks.map((link) => (
+              <a key={link.label} href={link.href} className="nav-link">
+                {link.label}
+              </a>
+            ))}
           </div>
-          <span className="font-display" style={{
-            fontSize: "1.5rem", fontWeight: 700, letterSpacing: "-0.01em",
-            color: scrolled ? theme.navText : "white",
-            transition: "color 0.3s ease",
-          }}>
-            Hirevoy
-          </span>
+
+          <div className="nav-actions">
+            <ThemeToggle darkMode={darkMode} onToggle={onToggleTheme} />
+            <button
+              type="button"
+              className="button button-primary"
+              onClick={() => scrollToSection("guides")}
+            >
+              Start Exploring
+            </button>
+          </div>
         </div>
 
-        {/* Desktop Links */}
-        <div style={{ display: "flex", gap: "2.25rem", alignItems: "center" }} className="nav-links">
-          {["Home", "Destinations", "Guides", "Contact"].map(link => (
-            <a key={link} href="#" style={{
-              fontSize: "0.9rem", fontWeight: 500,
-              color: navTextColor,
-              textDecoration: "none", letterSpacing: "0.02em",
-              transition: "color 0.2s ease",
-            }}
-              onMouseEnter={e => e.currentTarget.style.color = "var(--green-accent)"}
-              onMouseLeave={e => e.currentTarget.style.color = navTextColor}
+        <div className="nav-mobile-actions">
+          <ThemeToggle darkMode={darkMode} onToggle={onToggleTheme} />
+          <button
+            type="button"
+            className={`hamburger ${menuOpen ? "open" : ""}`}
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((current) => !current)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+        </div>
+      </div>
+
+      <div className={`mobile-menu glass-panel ${menuOpen ? "open" : ""}`}>
+        <div className="mobile-menu__links">
+          {navLinks.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              className="mobile-link"
+              onClick={closeMenu}
             >
-              {link}
+              {link.label}
             </a>
           ))}
-          <button
-            onClick={onToggleTheme}
-            style={{
-              marginRight: "1rem",
-              padding: "6px 12px",
-              borderRadius: "8px",
-              border: "none",
-              cursor: "pointer",
-              background: theme.toggleBg,
-              color: theme.toggleText,
-              fontSize: "0.875rem",
-              fontWeight: 500,
-              transition: "background 0.2s ease, color 0.2s ease, opacity 0.2s ease",
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = "0.8"}
-            onMouseLeave={e => e.currentTarget.style.opacity = "1"}
-          >
-            {theme.isDark ? "☀️ Light" : "🌙 Dark"}
-          </button>
-          <button style={{
-            background: `linear-gradient(135deg, ${colors.primary}, ${colors.accent})`,
-            color: "white", border: "none", borderRadius: 99,
-            padding: "10px 22px", fontSize: "0.875rem", fontWeight: 600,
-            cursor: "pointer", letterSpacing: "0.02em",
-            boxShadow: `0 4px 14px ${colors.primary}59`,
-            transition: "transform 0.2s, box-shadow 0.2s",
-          }}
-            onMouseEnter={e => { e.target.style.transform = "scale(1.04)"; e.target.style.boxShadow = `0 6px 20px ${colors.primary}73`; }}
-            onMouseLeave={e => { e.target.style.transform = "scale(1)"; e.target.style.boxShadow = `0 4px 14px ${colors.primary}59`; }}
-          >
-            Start Exploring
-          </button>
         </div>
-
-        {/* Mobile Hamburger */}
         <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          style={{ display: "none", background: "none", border: "none", cursor: "pointer", padding: 8 }}
-          className="md:hidden"
-          aria-label="Menu"
+          type="button"
+          className="button button-primary mobile-menu__cta"
+          onClick={() => {
+            closeMenu();
+            scrollToSection("guides");
+          }}
         >
-          <div style={{ width: 22, height: 2, background: menuLineColor, marginBottom: 5, transition: "background 0.3s ease" }} />
-          <div style={{ width: 22, height: 2, background: menuLineColor, marginBottom: 5, transition: "background 0.3s ease" }} />
-          <div style={{ width: 14, height: 2, background: menuLineColor, transition: "background 0.3s ease" }} />
+          Start Exploring
         </button>
       </div>
     </nav>
   );
 };
 
-// ─── Hero ───────────────────────────────────────────────────────────────────
 const Hero = () => (
-  <section style={{
-    position: "relative", height: "100vh", minHeight: 640,
-    display: "flex", alignItems: "center", justifyContent: "center",
-    overflow: "hidden",
-  }}>
-    {/* Background */}
-    <img
-      src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=1800&auto=format&fit=crop"
-      alt="Kerala backwaters"
-      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+  <section id="home" className="hero anchor-section">
+    <div
+      className="hero-background"
+      style={{ backgroundImage: `url("${heroImage}")` }}
     />
-    {/* Overlay */}
-    <div style={{
-      position: "absolute", inset: 0,
-      background: "linear-gradient(135deg, rgba(27,67,50,0.6) 0%, rgba(45,106,79,0.7) 60%, rgba(82,183,136,0.5) 100%)",
-    }} />
+    <div className="hero-overlay" />
+    <div className="hero-noise" />
 
-    {/* Grain texture */}
-    <div style={{
-      position: "absolute", inset: 0, opacity: 0.03,
-      backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")",
-    }} />
-
-    {/* Content */}
-    <div style={{ position: "relative", textAlign: "center", padding: "0 1.5rem", maxWidth: 820 }}>
-      <div className="pill anim-fadein delay-100" style={{ marginBottom: "1.5rem", background: "rgba(116,198,157,0.15)", color: "var(--green-light)", border: "1px solid rgba(116,198,157,0.3)" }}>
-        <span>✦</span> Now in Early Access — Kerala
-      </div>
-
-      <h1
-        className="font-display anim-fadeup delay-200"
-        style={{
-          fontSize: "clamp(2.4rem, 6vw, 5rem)",
-          fontWeight: 600,
-          lineHeight: 1.1,
-          color: "white",
-          letterSpacing: "-0.02em",
-          marginBottom: "1.25rem",
-        }}
-      >
-        Don't Just Visit.<br />
-        <em style={{ fontStyle: "italic", color: colors.highlight }}>Experience It</em> With a Local.
-      </h1>
-
-      <p className="anim-fadeup delay-300" style={{
-        fontSize: "clamp(1rem, 2vw, 1.2rem)",
-        color: "rgba(255,255,255,0.75)",
-        lineHeight: 1.7,
-        maxWidth: 560, margin: "0 auto 2.5rem",
-        fontWeight: 300,
-      }}>
-        Book trusted local guides and discover hidden places tourists miss — from backwater villages to misty hilltop trails.
-      </p>
-
-      <div className="anim-fadeup delay-400" style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-        <button
-          onClick={() => {
-            const section = document.getElementById("guides");
-            if (section) {
-              section.scrollIntoView({ behavior: "smooth" });
-            }
-          }}
-          style={{
-            background: `linear-gradient(135deg, ${colors.primary}, ${colors.accent})`,
-            color: "white",
-            border: "none",
-            borderRadius: 99,
-            padding: "15px 32px",
-            fontSize: "0.975rem",
-            fontWeight: 600,
-            cursor: "pointer",
-            boxShadow: `0 8px 25px ${colors.primary}66`,
-            transition: "transform 0.2s",
-          }}
-          onMouseEnter={e => e.currentTarget.style.transform = "scale(1.04)"}
-          onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
-        >
-          Find a Guide →
-        </button>
-        <button style={{
-          background: "rgba(255,255,255,0.1)",
-          color: "white", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 99,
-          padding: "15px 32px", fontSize: "0.975rem", fontWeight: 500,
-          cursor: "pointer", backdropFilter: "blur(8px)",
-          transition: "background 0.2s",
-        }}
-          onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.18)"}
-          onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
-        >
-          Become a Guide
-        </button>
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="anim-fadein delay-600" style={{ marginTop: "4rem" }}>
-        <div style={{
-          width: 1, height: 48, background: "linear-gradient(to bottom, rgba(255,255,255,0.5), transparent)",
-          margin: "0 auto",
-        }} />
-      </div>
-    </div>
-
-    {/* Stats bar */}
-    <div style={{
-      position: "absolute", bottom: 0, left: 0, right: 0,
-      background: "rgba(10,30,20,0.7)", backdropFilter: "blur(12px)",
-      borderTop: "1px solid rgba(116,198,157,0.15)",
-      padding: "1.25rem 2rem",
-    }}>
-      <div style={{
-        maxWidth: 900, margin: "0 auto",
-        display: "flex", justifyContent: "space-around", flexWrap: "wrap", gap: "1rem",
-      }}>
-        {[
-          ["Launching Soon", "Local Guides"],
-          ["Be the First", "Kerala Destinations"],
-          ["Early Access", "Happy Travelers"],
-          ["Building Trust", "Average Rating"],
-        ].map(([num, label]) => (
-          <div key={label} style={{ textAlign: "center" }}>
-            <div className="font-display" style={{ fontSize: "1.2rem", fontWeight: 600, color: "var(--green-light)", letterSpacing: "-0.01em" }}>{num}</div>
-            <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.6)", letterSpacing: "0.06em", textTransform: "uppercase" }}>{label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
-// ─── Value Proposition ──────────────────────────────────────────────────────
-const ValueProp = ({ theme }) => {
-  const features = [
-    { icon: "🗺️", title: "Hidden Local Spots", desc: "Skip the tour buses. Your guide knows the secret beaches, ancient temples, and viewpoints that aren't on any map." },
-    { icon: "🍛", title: "Authentic Food Experiences", desc: "Eat where locals eat. From toddy shops to rooftop fish curries — real Kerala on your plate." },
-    { icon: "🎭", title: "Cultural Insights", desc: "Understand what you're seeing. Every ritual, every craft, every face — explained with lived experience." },
-    { icon: "✅", title: "Verified Safe Guides", desc: "Every guide is background-checked, reviewed, and certified. You travel, we handle the trust." },
-  ];
-
-  return (
-    <section style={{
-      background: theme.bg,
-      padding: "6rem 2rem",
-      color: theme.text,
-      transition: "background 0.3s ease, color 0.3s ease",
-    }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-          <div className="section-line" />
-          <h2 className="font-display" style={{
-            fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 600,
-            color: theme.text, letterSpacing: "-0.02em", marginBottom: "0.75rem",
-          }}>
-            Skip the Tourist Traps
-          </h2>
-          <p style={{ color: theme.muted, maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>
-            Real travel is messy, unplanned, and deeply human. Hirevoy connects you to people who live it every day.
-          </p>
-        </div>
-
-        <div style={{
-          display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-          gap: "1.5rem",
-        }}>
-          {features.map((f, i) => (
-            <div key={i} className="card-hover" style={{
-              background: theme.surface, borderRadius: 20,
-              padding: "2rem 1.75rem",
-              border: theme.border,
-              boxShadow: theme.cardShadow,
-              color: theme.text,
-              transform: "translateY(0)",
-              transition: "background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease",
-            }}
-              onMouseEnter={e => e.currentTarget.style.transform = "translateY(-8px)"}
-              onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
-            >
-              <div style={{
-                fontSize: "1.75rem", marginBottom: "1rem",
-                width: 52, height: 52, borderRadius: 14,
-                background: theme.accentSurface,
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                {f.icon}
-              </div>
-              <h3 style={{ fontWeight: 700, fontSize: "1.05rem", color: theme.text, marginBottom: "0.5rem" }}>{f.title}</h3>
-              <p style={{ fontSize: "0.875rem", color: theme.softText, lineHeight: 1.75 }}>{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const HowItWorks = () => {
-  const steps = [
-    { num: "01", title: "Choose Your Destination", desc: "Browse Kerala's finest destinations — from Munnar's tea gardens to Kochi's colonial streets. Pick where you want to go.", icon: "📍" },
-    { num: "02", title: "Select Your Guide", desc: "Filter by language, specialty, budget, and ratings. Read real reviews from verified travelers.", icon: "🧭" },
-    { num: "03", title: "Book Instantly", desc: "Confirm in seconds. Secure payment, instant confirmation, direct contact with your guide.", icon: "⚡" },
-  ];
-
-  return (
-    <section style={{
-      background: "#0f172a",
-      padding: "6rem 2rem",
-      position: "relative", overflow: "hidden",
-      color: "white",
-    }}>
-      {/* Background decoration */}
-      <div style={{
-        position: "absolute", top: -120, right: -120,
-        width: 400, height: 400, borderRadius: "50%",
-        background: "rgba(64,145,108,0.08)",
-      }} />
-      <div style={{
-        position: "absolute", bottom: -80, left: -80,
-        width: 280, height: 280, borderRadius: "50%",
-        background: "rgba(116,198,157,0.05)",
-      }} />
-
-      <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative" }}>
-        <div style={{ textAlign: "center", marginBottom: "4.5rem" }}>
-          <div className="section-line" style={{ background: "linear-gradient(90deg, var(--green-light), var(--green-pale))" }} />
-          <h2 className="font-display" style={{
-            fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 700, letterSpacing: "-0.02em",
-            color: "white", marginBottom: "0.75rem",
-          }}>
-            How It Works
-          </h2>
-          <p style={{ color: "#cbd5e1", maxWidth: 400, margin: "0 auto" }}>
-            Three steps from your couch to a real Kerala adventure.
-          </p>
-        </div>
-
-        <div style={{
-          display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "1.5rem",
-        }}>
-          {steps.map((step, i) => (
-            <div key={i} style={{
-              background: "#1e293b",
-              border: "1px solid rgba(116,198,157,0.2)",
-              borderRadius: 16, padding: "2rem",
-              backdropFilter: "blur(8px)",
-              transition: "background 0.3s, transform 0.3s",
-              color: "#e2e8f0",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
-            }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = "#334155";
-                e.currentTarget.style.transform = "translateY(-4px)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = "#1e293b";
-                e.currentTarget.style.transform = "translateY(0)";
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
-                <span className="font-display" style={{
-                  fontSize: "2.5rem", fontWeight: 700,
-                  color: "var(--green-light)", lineHeight: 1,
-                }}>
-                  {step.num}
-                </span>
-                <div style={{
-                  width: 44, height: 44, borderRadius: 12,
-                  background: "rgba(64,145,108,0.2)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "1.3rem",
-                }}>
-                  {step.icon}
-                </div>
-              </div>
-              <h3 style={{ fontSize: "1.1rem", fontWeight: 600, color: "white", marginBottom: "0.75rem" }}>
-                {step.title}
-              </h3>
-              <p style={{ fontSize: "0.875rem", color: "#cbd5e1", lineHeight: 1.75 }}>
-                {step.desc}
-              </p>
-
-              {i < 2 && (
-                <div style={{
-                  position: "absolute", right: -0.75, top: "50%",
-                  color: "var(--green-accent)", fontSize: "1.5rem",
-                }}>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// ─── Explore Places ─────────────────────────────────────────────────────────
-const places = [
-  {
-    name: "Fort Kochi",
-    tag: "Heritage & Culture",
-    desc: "Wander Dutch cemeteries, Chinese fishing nets at sunrise, and spice markets that smell like the 1500s.",
-    img: "https://images.unsplash.com/photo-1609920658906-8223bd289001?w=800&auto=format&fit=crop",
-    guides: 84,
-  },
-  {
-    name: "PARAVOOR",
-    tag: "Hills & Tea Gardens",
-    desc: "Endless emerald tea estates, rolling mist, elephant sightings, and cardamom-scented air above 6,000 feet.",
-    img: "https://images.unsplash.com/photo-1587653915936-d8d30a22e079?w=800&auto=format&fit=crop",
-    guides: 62,
-  },
-  {
-    name: "CHERAI",
-    tag: "Backwaters & Villages",
-    desc: "Glide through a network of canals, sleep on a houseboat, and watch village life unfold on the water.",
-    img: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&auto=format&fit=crop&crop=center",
-    guides: 97,
-  },
-];
-
-const ExplorePlaces = ({ theme }) => (
-  <section style={{
-    padding: "7rem 2rem",
-    background: theme.surfaceAlt,
-    color: theme.text,
-    transition: "background 0.3s ease, color 0.3s ease",
-  }}>
-    <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-      <div style={{ marginBottom: "3.5rem" }}>
-        <div className="section-line" style={{ margin: "0 0 1.25rem" }} />
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1rem" }}>
-          <div>
-            <h2 className="font-display" style={{
-              fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 600,
-              color: theme.text, letterSpacing: "-0.02em",
-            }}>
-              Explore Places
-            </h2>
-            <p style={{ color: theme.muted, marginTop: "0.5rem" }}>Three of Kerala's most unforgettable destinations.</p>
-          </div>
-          <a href="#" style={{ color: "var(--green-accent)", fontWeight: 500, textDecoration: "none", fontSize: "0.9rem" }}>
-            View all destinations →
-          </a>
-        </div>
-      </div>
-
-      <div style={{
-        display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-        gap: "1.5rem",
-      }}>
-        {places.map((place, i) => (
-          <div key={i} className="card-hover" style={{
-            borderRadius: 24, overflow: "hidden",
-            background: theme.surface,
-            boxShadow: theme.cardShadow,
-            border: theme.strongBorder,
-            transition: "background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease",
-          }}>
-            <div style={{ position: "relative", height: 220, overflow: "hidden" }}>
-              <img
-                src={place.img} alt={place.name}
-                style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
-                onMouseEnter={e => e.target.style.transform = "scale(1.06)"}
-                onMouseLeave={e => e.target.style.transform = "scale(1)"}
-              />
-              <div className="img-overlay" />
-              <div style={{ position: "absolute", top: 14, left: 14 }}>
-                <span className="pill" style={{ background: "rgba(255,255,255,0.15)", color: "white", border: "1px solid rgba(255,255,255,0.25)", backdropFilter: "blur(6px)" }}>
-                  {place.tag}
-                </span>
-              </div>
-              <div style={{ position: "absolute", bottom: 14, right: 14 }}>
-                <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.8)", background: "rgba(0,0,0,0.35)", padding: "4px 10px", borderRadius: 99 }}>
-                  {place.guides} guides available
-                </span>
-              </div>
-            </div>
-            <div style={{ padding: "1.5rem" }}>
-              <h3 className="font-display" style={{ fontSize: "1.45rem", fontWeight: 700, color: theme.text, marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
-                {place.name}
-              </h3>
-              <p style={{ fontSize: "0.875rem", color: theme.softText, lineHeight: 1.7, marginBottom: "1.25rem" }}>
-                {place.desc}
-              </p>
-            <button style={{
-              width: "100%", background: colors.primary,
-              color: "white", border: "none", borderRadius: 12,
-              padding: "12px", fontSize: "0.875rem", fontWeight: 600,
-              cursor: "pointer", transition: "background 0.2s, transform 0.2s",
-              transform: "scale(1)",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.background = colors.accent; e.currentTarget.style.transform = "scale(1.02)"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = colors.primary; e.currentTarget.style.transform = "scale(1)"; }}
-            >
-                Explore with Guide
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
-// ─── Featured Guides ────────────────────────────────────────────────────────
-const guides = [
-  {
-    name: "Abishek Rajan",
-    location: "Fort Kochi",
-    rating: 0,
-    reviews: 0,
-    langs: ["English", "Malayalam", "Hindi"],
-    price: "log in to verify",
-    specialty: "Heritage & History",
-  },
-  {
-    name: "Eldho Sibi",
-    location: "Munnar",
-    rating: 0,
-    reviews: 0,
-    langs: ["English", "Malayalam", "Tamil"],
-    price: "log in to verify",
-    specialty: "Nature & Wildlife",
-    },
-  {
-    name: "Parvathy",
-    location: "Alleppey",
-    rating: 0,
-    reviews: 0,
-    langs: ["English", "Malayalam"],
-    price: "log in to verify",
-    specialty: "Backwaters & Villages",
-    },
-];
-
-const FeaturedGuides = ({ theme, onBookNow }) => (
-  <section id="guides" style={{
-    padding: "7rem 2rem",
-    background: theme.guideBackdrop,
-    color: theme.text,
-    transition: "background 0.3s ease, color 0.3s ease",
-  }}>
-    <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-      <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-        <div className="section-line" />
-        <h2 className="font-display" style={{
-          fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 700, letterSpacing: "-0.02em",
-          color: theme.text, marginBottom: "0.75rem",
-        }}>
-          Meet Your Guides
-        </h2>
-        <p style={{ color: theme.muted, maxWidth: 440, margin: "0 auto" }}>
-          Our first cohort of early-access guides — verified locals ready to show you Kerala before the crowds arrive.
+    <div className="hero-inner">
+      <div className="hero-content reveal is-visible">
+        <div className="pill">Early Access Kerala</div>
+        <h1 className="font-display hero-title">
+          Do Not Just Visit.
+          <br />
+          <em>Experience It</em> With a Local.
+        </h1>
+        <p className="hero-copy">
+          Book trusted local guides and discover hidden places tourists miss,
+          from backwater villages to misty hilltop trails.
         </p>
-      </div>
-
-      <div style={{
-        display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-        gap: "1.5rem",
-      }}>
-        {guides.map((g, i) => (
-          <div key={i} className="card-hover" style={{
-            background: theme.surface, borderRadius: 24,
-            padding: "2rem",
-            boxShadow: theme.cardShadow,
-            border: theme.border,
-            color: theme.text,
-            transform: "translateY(0)",
-            transition: "background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease",
-          }}
-            onMouseEnter={e => e.currentTarget.style.transform = "translateY(-8px)"}
-            onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
+        <div className="button-row">
+          <button
+            type="button"
+            className="button button-primary"
+            onClick={() => scrollToSection("guides")}
           >
-            <div style={{ display: "flex", gap: "1rem", marginBottom: "1.25rem" }}>
-              <div>
-                <h3 style={{ fontWeight: 600, fontSize: "1.05rem", color: theme.text }}>{g.name}</h3>
-                <p style={{ fontSize: "0.72rem", color: "var(--green-accent)", fontWeight: 500, marginBottom: "0.2rem", display: "flex", alignItems: "center", gap: 4 }}>
-                  <span>✔</span> Identity Verified
-                </p>
-                <p style={{ fontSize: "0.8rem", color: theme.muted, marginBottom: "0.25rem" }}>📍 {g.location}</p>
-                <span className="pill" style={{ fontSize: "0.7rem" }}>{g.specialty}</span>
-              </div>
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
-              <span style={{
-                fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.04em",
-                background: "rgba(64,145,108,0.1)", color: "var(--green-accent)",
-                padding: "3px 10px", borderRadius: 99, border: "1px solid rgba(64,145,108,0.2)",
-              }}>
-                Early Guide
-              </span>
-              <span style={{ fontSize: "0.8rem", color: theme.muted }}>New · Recently Joined</span>
-            </div>
-
-            <div style={{ marginBottom: "1.25rem" }}>
-              <p style={{ fontSize: "0.75rem", color: theme.muted, marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>Speaks</p>
-              <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
-                {g.langs.map(l => (
-                  <span key={l} style={{
-                    background: theme.chipBg, color: theme.chipText,
-                    fontSize: "0.75rem", padding: "3px 10px", borderRadius: 99,
-                  }}>
-                    {l}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <span style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--green-mid)" }}>
-                  Contact to know
-                </span>
-              </div>
-              <button 
-                onClick={onBookNow}
-              style={{
-                background: `linear-gradient(135deg, ${colors.primary}, ${colors.accent})`,
-                color: "white",
-                border: "none",
-                borderRadius: 10,
-                padding: "9px 20px",
-                fontSize: "0.82rem",
-                fontWeight: 600,
-                cursor: "pointer",
-                boxShadow: `0 4px 12px ${colors.primary}4d`,
-                transition: "all 0.2s",
-                transform: "scale(1)",
-              }}
-                onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.05)"; e.currentTarget.style.boxShadow = `0 6px 16px ${colors.primary}66`; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 12px ${colors.primary}4d`; }}
-              >
-                Book Now
-              </button>
-            </div>
-          </div>
-        ))}
+            Find a Guide
+          </button>
+          <button
+            type="button"
+            className="button button-ghost"
+            onClick={() => scrollToSection("contact")}
+          >
+            Become a Guide
+          </button>
+        </div>
+        <div className="hero-scroll" />
       </div>
-    </div>
-  </section>
-);
 
-// ─── Trust Section ──────────────────────────────────────────────────────────
-const TrustSection = ({ theme }) => {
-  const items = [
-    { icon: "🔍", title: "Background Verified", desc: "Every guide undergoes a thorough police verification and identity check before joining Hirevoy." },
-    { icon: "🪪", title: "ID Authenticated", desc: "Government-issued ID verification ensures you always know who's guiding you." },
-    { icon: "🔐", title: "Secure Booking", desc: "SSL-encrypted payments, zero hidden fees, and instant refunds for cancellations." },
-    { icon: "⭐", title: "Ratings & Reviews", desc: "Every booking results in a verified review. No fake ratings, no exceptions." },
-  ];
-
-  return (
-    <section style={{
-      padding: "6rem 2rem",
-      background: theme.bg,
-      color: theme.text,
-      transition: "background 0.3s ease, color 0.3s ease",
-    }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <div style={{
-          display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem",
-          alignItems: "center",
-        }}>
-          {/* Left */}
-          <div>
-            <div className="section-line" style={{ margin: "0 0 1.5rem" }} />
-            <h2 className="font-display" style={{
-              fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, letterSpacing: "-0.02em",
-              color: theme.text, marginBottom: "1rem",
-            }}>
-              Your Safety<br />Matters to Us
-            </h2>
-            <p style={{ color: theme.muted, lineHeight: 1.8, marginBottom: "2rem", maxWidth: 380 }}>
-              We don't just list guides — we vet them. Every person on Hirevoy has passed our safety checks, so you can focus on the experience.
-            </p>
-            <button style={{
-              background: colors.primary, color: "white",
-              border: "none", borderRadius: 12, padding: "13px 26px",
-              fontSize: "0.9rem", fontWeight: 600, cursor: "pointer",
-              transition: "all 0.2s",
-              transform: "scale(1)",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.background = colors.accent; e.currentTarget.style.transform = "scale(1.03)"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = colors.primary; e.currentTarget.style.transform = "scale(1)"; }}
-            >
-              Learn about our safety process
-            </button>
-          </div>
-
-          {/* Right */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-            {items.map((item, i) => (
-              <div key={i} style={{
-                background: theme.isDark ? theme.surface : (i % 2 === 0 ? "var(--green-pale)" : "var(--green-deep)"),
-                borderRadius: 20, padding: "1.5rem",
-                border: theme.isDark ? theme.border : "none",
-                boxShadow: theme.isDark ? theme.cardShadow : "none",
-                transition: "background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease",
-              }}
-                onMouseEnter={e => e.currentTarget.style.transform = "scale(1.02)"}
-                onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
-              >
-                <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>{item.icon}</div>
-                <h4 style={{
-                  fontSize: "0.9rem", fontWeight: 600, marginBottom: "0.4rem",
-                  color: theme.isDark ? theme.text : (i % 2 === 0 ? "var(--green-deep)" : "white"),
-                }}>
-                  {item.title}
-                </h4>
-                <p style={{
-                  fontSize: "0.78rem", lineHeight: 1.65,
-                  color: theme.isDark ? theme.softText : (i % 2 === 0 ? "var(--muted)" : "rgba(255,255,255,0.6)"),
-                }}>
-                  {item.desc}
-                </p>
+      <div className="hero-stats-wrap">
+        <div className="hero-stats glass-panel reveal delay-2" data-reveal>
+          <div className="hero-stats-grid">
+            {heroStats.map(([value, label]) => (
+              <div key={label}>
+                <div className="font-display hero-stat__value">{value}</div>
+                <div className="hero-stat__label">{label}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
-    </section>
-  );
-};
+    </div>
+  </section>
+);
 
-// ─── Final CTA ───────────────────────────────────────────────────────────────
-const FinalCTA = () => (
+const ValueProp = () => (
   <section
-    style={{
-      position: "relative",
-      overflow: "hidden",
-      padding: "8rem 2rem",
-      background: `linear-gradient(135deg, ${colors.dark} 0%, #0d2b1f 100%)`,
-      textAlign: "center",
-    }}
+    className="section anchor-section"
+    style={{ background: "var(--surface)" }}
   >
-    {/* Background decoration */}
-    <div
-      style={{
-        position: "absolute",
-        top: -100,
-        left: "50%",
-        transform: "translateX(-50%)",
-        width: 600,
-        height: 600,
-        borderRadius: "50%",
-        background:
-          "radial-gradient(circle, rgba(64,145,108,0.2) 0%, transparent 70%)",
-        pointerEvents: "none",
-      }}
-    />
-    <div
-      style={{
-        position: "absolute",
-        bottom: -60,
-        right: -60,
-        width: 240,
-        height: 240,
-        borderRadius: "50%",
-        background: "rgba(116,198,157,0.07)",
-      }}
-    />
-
-    <div style={{ position: "relative", maxWidth: 680, margin: "0 auto" }}>
-      <div
-        className="pill"
-        style={{
-          background: "rgba(116,198,157,0.12)",
-          color: "var(--green-light)",
-          border: "1px solid rgba(116,198,157,0.2)",
-          marginBottom: "1.5rem",
-        }}
-      >
-        ✦ Ready to explore?
+    <div className="section-inner">
+      <div className="section-heading reveal" data-reveal>
+        <div className="section-line" />
+        <h2 className="font-display section-title">Skip the Tourist Traps</h2>
+        <p className="section-copy">
+          Real travel is messy, unplanned, and deeply human. Hirevoy connects
+          you to people who live it every day.
+        </p>
       </div>
 
-      <h2
-        className="font-display"
-        style={{
-          fontSize: "clamp(2.2rem, 5vw, 4rem)",
-          fontWeight: 600,
-          color: "white",
-          letterSpacing: "-0.02em",
-          lineHeight: 1.15,
-          marginBottom: "1.25rem",
-        }}
-      >
-        Start Exploring Kerala
-        <br />
-        <em style={{ color: colors.highlight, fontStyle: "italic" }}>
-          Like a Local
-        </em>
-      </h2>
-
-      <p
-        style={{
-          color: "rgba(255,255,255,0.6)",
-          fontSize: "1.05rem",
-          lineHeight: 1.7,
-          marginBottom: "2.5rem",
-        }}
-      >
-        We're just getting started. Be among the first travelers to experience
-        Kerala through the eyes of a local — early access, real connections, no
-        tourist traps.
-      </p>
-
-      <div
-        style={{
-          display: "flex",
-          gap: "1rem",
-          justifyContent: "center",
-          flexWrap: "wrap",
-        }}
-      >
-        {/* PRIMARY BUTTON */}
-        <button
-          onClick={() => {
-            const section = document.getElementById("guides");
-            if (section) {
-              section.scrollIntoView({ behavior: "smooth" });
-            } else {
-              console.warn("guides section not found");
-            }
-          }}
-          style={{
-            background: `linear-gradient(135deg, ${colors.primary}, ${colors.accent})`,
-            color: "white",
-            border: "none",
-            borderRadius: 99,
-            padding: "16px 36px",
-            fontSize: "1rem",
-            fontWeight: 600,
-            cursor: "pointer",
-            transition: "transform 0.2s",
-          }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.transform = "scale(1.05)")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.transform = "scale(1)")
-          }
-        >
-          Find Your Guide →
-        </button>
-
-        {/* SECONDARY BUTTON */}
-        <button
-          style={{
-            background: "transparent",
-            color: "rgba(255,255,255,0.7)",
-            border: "1px solid rgba(255,255,255,0.2)",
-            borderRadius: 99,
-            padding: "16px 36px",
-            fontSize: "1rem",
-            fontWeight: 500,
-            cursor: "pointer",
-            transition: "border-color 0.2s, color 0.2s",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)";
-            e.currentTarget.style.color = "white";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)";
-            e.currentTarget.style.color = "rgba(255,255,255,0.7)";
-          }}
-        >
-          Browse Destinations
-        </button>
+      <div className="cards-grid features-grid">
+        {features.map((feature, index) => (
+          <article
+            key={feature.title}
+            className={`card feature-card lift-card reveal delay-${(index % 3) + 1}`}
+            data-reveal
+          >
+            <span className="feature-badge">{feature.badge}</span>
+            <h3 className="feature-title">{feature.title}</h3>
+            <p className="feature-copy">{feature.desc}</p>
+          </article>
+        ))}
       </div>
     </div>
   </section>
 );
-// ─── Footer ──────────────────────────────────────────────────────────────────
-const Footer = () => (
-  <footer style={{
-    background: "#0a1a11", color: "rgba(255,255,255,0.55)",
-    padding: "3.5rem 2rem 2rem",
-  }}>
-    <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-      <div style={{
-        display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "2rem",
-        marginBottom: "3rem",
-      }}>
-        <div style={{ maxWidth: 280 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem" }}>
-            <div style={{
-              width: 28, height: 28, borderRadius: "50%",
-              background: "linear-gradient(135deg, #2d6a4f, #40916c)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="white"/>
-                <circle cx="12" cy="9" r="2.5" fill="#2d6a4f"/>
-              </svg>
+
+const HowItWorks = () => (
+  <section
+    className="section"
+    style={{
+      background: "linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%)",
+    }}
+  >
+    <div className="section-inner">
+      <div className="section-heading reveal" data-reveal>
+        <div className="section-line" />
+        <h2 className="font-display section-title">How It Works</h2>
+        <p className="section-copy">
+          Three simple steps from your couch to a more human Kerala adventure.
+        </p>
+      </div>
+
+      <div className="cards-grid steps-grid">
+        {steps.map((step, index) => (
+          <article
+            key={step.num}
+            className={`card step-card lift-card reveal delay-${(index % 3) + 1}`}
+            data-reveal
+          >
+            <div className="step-number-row">
+              <span className="font-display step-number">{step.num}</span>
+              <span className="step-tag">{step.tag}</span>
             </div>
-            <span className="font-display" style={{ fontSize: "1.3rem", fontWeight: 700, color: "white" }}>Hirevoy</span>
+            <h3 className="step-title">{step.title}</h3>
+            <p className="step-copy">{step.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const ExplorePlaces = () => (
+  <section id="destinations" className="section anchor-section">
+    <div className="section-inner">
+      <div className="section-heading reveal" data-reveal>
+        <div className="section-line" />
+        <h2 className="font-display section-title">Explore Places</h2>
+        <p className="section-copy">
+          Three of Kerala's most unforgettable destinations for a first great
+          Hirevoy experience.
+        </p>
+      </div>
+
+      <div className="cards-grid places-grid">
+        {places.map((place, index) => (
+          <article
+            key={place.name}
+            className={`card place-card lift-card reveal delay-${(index % 3) + 1}`}
+            data-reveal
+          >
+            <div className="place-media">
+              <img src={place.img} alt={place.name} />
+              <span className="place-chip">{place.tag}</span>
+              <span className="place-count">{place.guides} guides available</span>
+            </div>
+            <div className="place-body">
+              <h3 className="font-display place-name">{place.name}</h3>
+              <p className="place-copy">{place.desc}</p>
+              <div style={{ marginTop: "1.35rem" }}>
+                <button
+                  type="button"
+                  className="button button-primary"
+                  style={{ width: "100%" }}
+                  onClick={() => scrollToSection("guides")}
+                >
+                  Explore with a Guide
+                </button>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const FeaturedGuides = ({ onBookNow }) => (
+  <section
+    id="guides"
+    className="section anchor-section"
+    style={{
+      background: "linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%)",
+    }}
+  >
+    <div className="section-inner">
+      <div className="section-heading reveal" data-reveal>
+        <div className="section-line" />
+        <h2 className="font-display section-title">Meet Your Guides</h2>
+        <p className="section-copy">
+          Our first cohort of early access guides is ready to show you Kerala
+          before the crowds arrive.
+        </p>
+      </div>
+
+      <div className="cards-grid guides-grid">
+        {guides.map((guide, index) => (
+          <article
+            key={guide.name}
+            className={`card guide-card lift-card reveal delay-${(index % 3) + 1}`}
+            data-reveal
+          >
+            <div className="guide-topline">
+              <div>
+                <h3 className="guide-name">{guide.name}</h3>
+                <div className="guide-location">{guide.location}</div>
+              </div>
+              <span className="guide-verification">Verified Identity</span>
+            </div>
+
+            <span className="pill" style={{ fontSize: "0.72rem" }}>
+              {guide.specialty}
+            </span>
+
+            <div className="guide-meta">
+              <span className="meta-tag">Early Guide</span>
+              <span className="meta-tag">Recently Joined</span>
+            </div>
+
+            <p className="guide-copy" style={{ marginTop: "1rem" }}>
+              Languages: {guide.langs.join(", ")}
+            </p>
+
+            <div className="guide-action">
+              <span className="price-note">Contact to know pricing</span>
+              <button
+                type="button"
+                className="button button-primary"
+                onClick={onBookNow}
+              >
+                Book Now
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const TrustSection = () => (
+  <section
+    className="section"
+    style={{ background: "var(--surface)" }}
+  >
+    <div className="section-inner split-grid">
+      <div className="reveal" data-reveal>
+        <div className="section-line" style={{ marginLeft: 0 }} />
+        <h2 className="font-display section-title">Your Safety Matters to Us</h2>
+        <p className="section-copy" style={{ marginLeft: 0 }}>
+          We do not just list guides. We vet them. Every person on Hirevoy is
+          reviewed before launch so travelers can focus on the experience.
+        </p>
+        <div style={{ marginTop: "1.6rem" }}>
+          <button type="button" className="button button-primary">
+            Learn About Our Safety Process
+          </button>
+        </div>
+      </div>
+
+      <div className="trust-grid">
+        {trustItems.map((item, index) => (
+          <article
+            key={item.title}
+            className={`card trust-card lift-card reveal delay-${(index % 3) + 1}`}
+            data-reveal
+          >
+            <span className="trust-label">{item.label}</span>
+            <h3 className="trust-title">{item.title}</h3>
+            <p className="trust-copy">{item.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const FinalCTA = () => (
+  <section className="section cta-section">
+    <div className="cta-orb cta-orb--large" />
+    <div className="cta-orb cta-orb--small" />
+
+    <div className="section-inner" style={{ position: "relative" }}>
+      <div className="reveal" data-reveal>
+        <div className="pill">Ready to explore</div>
+        <h2
+          className="font-display"
+          style={{
+            margin: "1.15rem 0 0",
+            fontSize: "clamp(2.2rem, 5vw, 4rem)",
+            fontWeight: 600,
+            lineHeight: 1.12,
+            letterSpacing: "-0.03em",
+          }}
+        >
+          Start Exploring Kerala
+          <br />
+          <em style={{ color: "var(--accent)", fontStyle: "italic" }}>
+            Like a Local
+          </em>
+        </h2>
+        <p className="cta-copy">
+          We are just getting started. Be among the first travelers to
+          experience Kerala through the eyes of a local guide.
+        </p>
+        <div className="button-row">
+          <button
+            type="button"
+            className="button button-primary"
+            onClick={() => scrollToSection("guides")}
+          >
+            Find Your Guide
+          </button>
+          <button
+            type="button"
+            className="button cta-ghost"
+            onClick={() => scrollToSection("destinations")}
+          >
+            Browse Destinations
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+const Footer = () => (
+  <footer id="contact" className="section footer anchor-section">
+    <div className="section-inner">
+      <div className="footer-grid">
+        <div className="footer-brand reveal" data-reveal>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.8rem",
+              marginBottom: "0.9rem",
+            }}
+          >
+            <LogoMark />
+            <span
+              className="font-display"
+              style={{ fontSize: "1.35rem", fontWeight: 700, color: "var(--footer-heading)" }}
+            >
+              Hirevoy
+            </span>
           </div>
-          <p style={{ fontSize: "0.84rem", lineHeight: 1.75 }}>
-            Connecting travelers with verified local guides for real, unfiltered Kerala experiences.
+          <p style={{ margin: 0, lineHeight: 1.75 }}>
+            Connecting travelers with verified local guides for real, unfiltered
+            Kerala experiences.
           </p>
         </div>
 
-        {[
-          ["Explore", ["Destinations", "Find a Guide", "How It Works", "Safety"]],
-          ["Guides", ["Become a Guide", "Guide Dashboard", "Payouts", "Resources"]],
-          ["Company", ["About Us", "Blog", "Careers", "Contact"]],
-        ].map(([title, links]) => (
-          <div key={title}>
-            <h4 style={{ color: "white", fontWeight: 600, marginBottom: "1rem", fontSize: "0.9rem" }}>{title}</h4>
-            <ul style={{ listStyle: "none" }}>
-              {links.map(l => (
-                <li key={l} style={{ marginBottom: "0.5rem" }}>
-                  <a href="#" style={{
-                    color: "rgba(255,255,255,0.5)", textDecoration: "none", fontSize: "0.84rem",
-                    transition: "color 0.2s",
-                  }}
-                    onMouseEnter={e => e.target.style.color = "var(--green-light)"}
-                    onMouseLeave={e => e.target.style.color = "rgba(255,255,255,0.5)"}
-                  >
-                    {l}
+        {footerGroups.map(([title, links], index) => (
+          <div key={title} className={`reveal delay-${(index % 3) + 1}`} data-reveal>
+            <h4 className="footer-heading">{title}</h4>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {links.map((link) => (
+                <li key={link} style={{ marginBottom: "0.55rem" }}>
+                  <a href="#contact" className="footer-link">
+                    {link}
                   </a>
                 </li>
               ))}
@@ -1123,20 +1802,12 @@ const Footer = () => (
         ))}
       </div>
 
-      <div style={{
-        borderTop: "1px solid rgba(255,255,255,0.07)",
-        paddingTop: "1.5rem",
-        display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem",
-        fontSize: "0.8rem",
-      }}>
-        <span>© 2025 Hirevoy. All rights reserved.</span>
-        <div style={{ display: "flex", gap: "1.5rem" }}>
-          {["Privacy", "Terms", "Cookies"].map(l => (
-            <a key={l} href="#" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none", transition: "color 0.2s" }}
-              onMouseEnter={e => e.target.style.color = "var(--green-light)"}
-              onMouseLeave={e => e.target.style.color = "rgba(255,255,255,0.4)"}
-            >
-              {l}
+      <div className="footer-meta">
+        <span>{new Date().getFullYear()} Hirevoy. All rights reserved.</span>
+        <div className="footer-legal">
+          {["Privacy", "Terms", "Cookies"].map((label) => (
+            <a key={label} href="#contact" className="footer-link">
+              {label}
             </a>
           ))}
         </div>
@@ -1145,204 +1816,179 @@ const Footer = () => (
   </footer>
 );
 
-// ─── App ─────────────────────────────────────────────────────────────────────
 export default function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     location: "",
-    message: ""
+    message: "",
   });
   const [error, setError] = useState("");
-  const theme = createTheme(darkMode);
 
   useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved === "dark") setDarkMode(true);
-    if (saved === "light") setDarkMode(false);
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      setDarkMode(false);
+    }
+    if (savedTheme === "dark") {
+      setDarkMode(true);
+    }
   }, []);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.14 }
+    );
+
+    const nodes = document.querySelectorAll("[data-reveal]");
+    nodes.forEach((node) => observer.observe(node));
+
+    return () => observer.disconnect();
+  }, []);
+
+  const theme = darkMode ? themes.dark : themes.light;
+  const isFormValid = formData.name.trim() && formData.location.trim();
+
   const handleThemeToggle = () => {
-    const newMode = !darkMode;
-    setDarkMode(newMode);
-    localStorage.setItem("theme", newMode ? "dark" : "light");
+    const nextMode = !darkMode;
+    setDarkMode(nextMode);
+    localStorage.setItem("theme", nextMode ? "dark" : "light");
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData((current) => ({ ...current, [field]: value }));
+    if (error) {
+      setError("");
+    }
+  };
+
+  const handleGuideSubmit = () => {
+    if (!isFormValid) {
+      setError("Please fill in your name and location.");
+      return;
+    }
+
+    const text = `Hi, my name is ${formData.name}.
+I am from ${formData.location}.
+I need: ${formData.message || "A local guide recommendation."}`;
+
+    openWhatsAppMessage(text);
+    setShowForm(false);
+    setFormData({ name: "", location: "", message: "" });
+    setError("");
   };
 
   return (
-    <div style={{
-      background: theme.bg,
-      color: theme.text,
-      minHeight: "100vh",
-      transition: "all 0.3s ease",
-    }}>
-      <FontStyle />
-      <Navbar theme={theme} onToggleTheme={handleThemeToggle} />
+    <div
+      className="app-shell"
+      style={{
+        background: theme.bg,
+        color: theme.text,
+        minHeight: "100vh",
+        transition: "all 0.3s ease",
+      }}
+    >
+      <AppStyles theme={theme} />
+
+      <Navbar darkMode={darkMode} onToggleTheme={handleThemeToggle} />
+
       <main>
         <Hero />
-        <ValueProp theme={theme} />
+        <ValueProp />
         <HowItWorks />
-        <ExplorePlaces theme={theme} />
-        <FeaturedGuides theme={theme} onBookNow={() => setShowForm(true)} />
-        <TrustSection theme={theme} />
+        <ExplorePlaces />
+        <FeaturedGuides onBookNow={() => setShowForm(true)} />
+        <TrustSection />
         <FinalCTA />
       </main>
+
       <Footer />
- <a
-  href="https://wa.me/919778405403?text=Hi%20I%20found%20Hirevoy%20and%20want%20to%20book%20a%20guide"
-  target="_blank"
-  rel="noopener noreferrer"
-  title="Chat on WhatsApp"
-  style={{
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    backgroundColor: "#25D366",
-    color: "white",
-    borderRadius: "50%",
-    width: "60px",
-    height: "60px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    boxShadow: "0 4px 12px rgba(37,211,102,0.3)",
-    transition: "transform 0.2s, box-shadow 0.2s",
-    zIndex: 1000,
-    textDecoration: "none",
-  }}
-  onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}
-  onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 32 32"
-    width="28"
-    height="28"
-    fill="white"
-  >
-    <path d="M16 .5C7.4.5.5 7.4.5 16c0 2.8.7 5.4 2.1 7.7L.5 31.5l8-2.1c2.2 1.2 4.6 1.8 7.1 1.8 8.6 0 15.5-6.9 15.5-15.5S24.6.5 16 .5zm0 28.3c-2.3 0-4.5-.6-6.5-1.7l-.5-.3-4.7 1.2 1.3-4.6-.3-.5c-1.2-2-1.9-4.3-1.9-6.7C3.4 8.6 9.6 2.4 16 2.4S28.6 8.6 28.6 16 22.4 28.8 16 28.8zm7.5-9.3c-.4-.2-2.4-1.2-2.8-1.3-.4-.2-.6-.2-.9.2s-1 1.3-1.2 1.6c-.2.2-.4.3-.8.1-2.3-1.1-3.8-2-5.3-4.5-.4-.7.4-.6 1.1-2 .1-.2.1-.5 0-.7-.1-.2-.9-2.2-1.2-3-.3-.8-.6-.7-.9-.7h-.7c-.2 0-.7.1-1 .5s-1.4 1.4-1.4 3.4 1.5 4 1.7 4.3c.2.3 3 4.6 7.4 6.5 1 .4 1.8.6 2.4.8 1 .3 1.9.2 2.6.1.8-.1 2.4-1 2.8-1.9.3-.9.3-1.7.2-1.9-.1-.2-.3-.3-.7-.5z"/>
-  </svg>
-</a>
+
+      <a
+        href="https://wa.me/919778405403?text=Hi%20I%20found%20Hirevoy%20and%20want%20to%20book%20a%20guide"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="whatsapp-fab"
+        aria-label="Chat on WhatsApp"
+        title="Chat on WhatsApp"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 32 32"
+          width="28"
+          height="28"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M16 .5C7.4.5.5 7.4.5 16c0 2.8.7 5.4 2.1 7.7L.5 31.5l8-2.1c2.2 1.2 4.6 1.8 7.1 1.8 8.6 0 15.5-6.9 15.5-15.5S24.6.5 16 .5zm0 28.3c-2.3 0-4.5-.6-6.5-1.7l-.5-.3-4.7 1.2 1.3-4.6-.3-.5c-1.2-2-1.9-4.3-1.9-6.7C3.4 8.6 9.6 2.4 16 2.4S28.6 8.6 28.6 16 22.4 28.8 16 28.8zm7.5-9.3c-.4-.2-2.4-1.2-2.8-1.3-.4-.2-.6-.2-.9.2s-1 1.3-1.2 1.6c-.2.2-.4.3-.8.1-2.3-1.1-3.8-2-5.3-4.5-.4-.7.4-.6 1.1-2 .1-.2.1-.5 0-.7-.1-.2-.9-2.2-1.2-3-.3-.8-.6-.7-.9-.7h-.7c-.2 0-.7.1-1 .5s-1.4 1.4-1.4 3.4 1.5 4 1.7 4.3c.2.3 3 4.6 7.4 6.5 1 .4 1.8.6 2.4.8 1 .3 1.9.2 2.6.1.8-.1 2.4-1 2.8-1.9.3-.9.3-1.7.2-1.9-.1-.2-.3-.3-.7-.5z" />
+        </svg>
+      </a>
+
       {showForm && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          background: "rgba(0,0,0,0.6)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 9999,
-        }}>
-          <div style={{
-            background: theme.surface,
-            color: theme.text,
-            padding: "30px",
-            borderRadius: "12px",
-            width: "90%",
-            maxWidth: "400px",
-            border: theme.border,
-            boxShadow: theme.cardShadow,
-            transition: "background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease",
-          }}>
-            <h2>Request a Guide</h2>
-            <input
-              placeholder="Your Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              style={{
-                width: "100%",
-                marginBottom: "10px",
-                padding: "10px",
-                borderRadius: "8px",
-                border: theme.inputBorder,
-                background: theme.inputBg,
-                color: theme.text,
-              }}
-            />
-            <input
-              placeholder="Location"
-              value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              style={{
-                width: "100%",
-                marginBottom: "10px",
-                padding: "10px",
-                borderRadius: "8px",
-                border: theme.inputBorder,
-                background: theme.inputBg,
-                color: theme.text,
-              }}
-            />
-            <textarea
-              placeholder="Tell us what you want to explore (food, places, etc.)"
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              style={{
-                width: "100%",
-                marginBottom: "10px",
-                padding: "10px",
-                borderRadius: "8px",
-                border: theme.inputBorder,
-                background: theme.inputBg,
-                color: theme.text,
-              }}
-            />
-            {error && (
-              <p style={{ color: "red", marginBottom: "10px" }}>
-                {error}
-              </p>
-            )}
-            <button
-              disabled={!formData.name || !formData.location}
-              onClick={() => {
-                if (!formData.name || !formData.location) {
-                  setError("Please fill all required fields");
-                  return;
+        <div className="modal-backdrop">
+          <div className="modal-card">
+            <h2 className="modal-title">Request a Guide</h2>
+            <p className="modal-copy">
+              Tell us where you are coming from and what you want to explore.
+              We will open WhatsApp with your request ready to send.
+            </p>
+
+            <div className="field-stack">
+              <input
+                className="field-input"
+                placeholder="Your name"
+                value={formData.name}
+                onChange={(event) =>
+                  handleInputChange("name", event.target.value)
                 }
+              />
+              <input
+                className="field-input"
+                placeholder="Your location"
+                value={formData.location}
+                onChange={(event) =>
+                  handleInputChange("location", event.target.value)
+                }
+              />
+              <textarea
+                className="field-input field-input--textarea"
+                placeholder="Tell us what you want to explore"
+                value={formData.message}
+                onChange={(event) =>
+                  handleInputChange("message", event.target.value)
+                }
+              />
+              {error ? <p className="modal-error">{error}</p> : null}
+            </div>
 
-                const text = `Hi, my name is ${formData.name}.
-I am from ${formData.location}.
-I need: ${formData.message}`;
-
-                const url = `https://wa.me/919778405403?text=${encodeURIComponent(text)}`;
-
-                window.open(url, "_blank");
-
-                setShowForm(false);
-                setFormData({
-                  name: "",
-                  location: "",
-                  message: ""
-                });
-                setError("");
-              }}
-              style={{
-                width: "100%",
-                padding: "12px",
-                background: !formData.name || !formData.location ? "#ccc" : "#2d6a4f",
-                color: "white",
-                border: "none",
-                borderRadius: "8px",
-                cursor: !formData.name || !formData.location ? "not-allowed" : "pointer"
-              }}
-            >
-              Submit
-            </button>
-            <button
-              onClick={() => setShowForm(false)}
-              style={{
-                marginTop: "10px",
-                background: "none",
-                border: "none",
-                color: theme.muted,
-                cursor: "pointer",
-              }}
-            >
-              Close
-            </button>
+            <div className="modal-actions">
+              <button
+                type="button"
+                className={`button button-primary button-block ${
+                  !isFormValid ? "button-disabled" : ""
+                }`}
+                disabled={!isFormValid}
+                onClick={handleGuideSubmit}
+              >
+                Submit on WhatsApp
+              </button>
+              <button
+                type="button"
+                className="button button-secondary button-block"
+                onClick={() => setShowForm(false)}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
