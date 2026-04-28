@@ -3,14 +3,34 @@ import { Link, useNavigate } from "react-router-dom";
 const destinations = [
   {
     name: "Fort Kochi",
-    description:
-      "Historic coastal area known for colonial architecture, Chinese fishing nets, and cultural streets.",
+    desc: "Historic coastal area known for colonial architecture, Chinese fishing nets, and cultural streets.",
+    location: "Kochi"
   },
   {
     name: "Cherai Beach",
-    description:
-      "A long, calm beach with shallow waters, coconut groves, and occasional dolphin sightings.",
+    desc: "A long, calm beach with shallow waters, coconut groves, and occasional dolphin sightings.",
+    location: "Kochi"
   },
+  {
+    name: "Munnar",
+    desc: "Hill station famous for tea plantations, misty valleys, and scenic viewpoints.",
+    location: "Munnar"
+  },
+  {
+    name: "Alleppey",
+    desc: "Backwater paradise with houseboats, canals, and slow village life.",
+    location: "Alleppey"
+  },
+  {
+    name: "Wayanad",
+    desc: "Forest-covered hills with waterfalls, caves, and wildlife experiences.",
+    location: "Wayanad"
+  },
+  {
+    name: "Varkala",
+    desc: "Cliffside beach destination with cafes, sunsets, and spiritual vibes.",
+    location: "Varkala"
+  }
 ];
 
 const Destinations = () => {
@@ -75,13 +95,16 @@ const Destinations = () => {
         </div>
 
         <div className="destinations-grid">
-          {destinations.map((destination) => (
-            <div className="destination-card" key={destination.name}>
-              <h3>{destination.name}</h3>
-              <p>{destination.description}</p>
+          {destinations.map((d, i) => (
+            <div key={i} className="destination-card">
+              <h3 className="destination-title">{d.name}</h3>
+              <p className="destination-desc">{d.desc}</p>
 
-              <button onClick={() => navigate(`/guides?location=${destination.name}`)}>
-                Find Guides in {destination.name}
+              <button
+                className="destination-btn"
+                onClick={() => navigate(`/guides?location=${d.location}`)}
+              >
+                Find Guides in {d.name}
               </button>
             </div>
           ))}

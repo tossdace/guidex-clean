@@ -43,8 +43,47 @@ html, body {
 
 .destinations-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.destination-card {
+  background: #0f172a;
+  border: 1px solid #1f2937;
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.25s ease;
+}
+
+.destination-card:hover {
+  transform: translateY(-5px);
+  border-color: #22c55e;
+  box-shadow: 0 10px 30px rgba(34,197,94,0.15);
+}
+
+.destination-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.destination-desc {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #9ca3af;
+  line-height: 1.5;
+}
+
+.destination-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  cursor: pointer;
 }
 
 .guides-grid {
@@ -53,30 +92,12 @@ html, body {
   margin-top: 20px;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fadeInUp {
-  opacity: 0;
-  animation: fadeInUp 0.6s ease both;
-}
-
 .guide-card {
   background: #0f172a;
+  border: 1px solid #1f2937;
   border-radius: 16px;
-  padding: 20px;
-  border: 1px solid rgba(255,255,255,0.05);
+  padding: 18px;
   transition: all 0.25s ease;
-  cursor: pointer;
 }
 
 .guide-card:hover {
@@ -86,53 +107,36 @@ html, body {
 }
 
 .guide-name {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
-  margin-bottom: 8px;
+  color: #fff;
 }
 
 .guide-meta {
+  margin-top: 6px;
   color: #9ca3af;
   font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.guide-price {
-  margin-top: 10px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #22c55e;
 }
 
 .guide-trust {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 13px;
   color: #9ca3af;
 }
 
 .guide-btn {
-  margin-top: 16px;
+  margin-top: 14px;
   width: 100%;
   background: linear-gradient(135deg, #22c55e, #16a34a);
   color: white;
-  padding: 14px;
-  border-radius: 12px;
+  padding: 12px;
+  border-radius: 10px;
   border: none;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(34,197,94,0.25);
-}
-
-.guide-btn:hover {
-  transform: scale(1.03);
-}
-
-.guide-btn:active {
-  transform: scale(0.97);
 }
 
 
@@ -184,7 +188,7 @@ p {
 
 @media (min-width: 640px) {
   .destinations-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .guides-grid {
@@ -194,7 +198,7 @@ p {
 
 @media (min-width: 1024px) {
   .destinations-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .guides-grid {

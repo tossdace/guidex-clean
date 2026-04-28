@@ -2157,9 +2157,8 @@ Can you share details and availability?`
             <div className="modal-actions">
               <button
                 type="button"
-                className={`button button-primary button-block ${
-                  !isFormValid ? "button-disabled" : ""
-                }`}
+                className={`button button-primary button-block ${!isFormValid ? "button-disabled" : ""
+                  }`}
                 disabled={!isFormValid}
                 onClick={handleGuideSubmit}
               >

@@ -51,9 +51,9 @@ const GuideCard = ({ guide, highlight = false, index = 0 }) => {
     >
       <h3 className="guide-name">{guide.name}</h3>
 
-      <p className="guide-meta">{languages}</p>
-
-      <p className="guide-price">₹{guide.price}/day</p>
+      <p className="guide-meta">
+        {guide.languages.join(", ")} • ₹{guide.price}/day
+      </p>
 
       <div className="guide-trust">
         <span>✓ Verified</span>
