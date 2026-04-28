@@ -2,19 +2,20 @@ import { Link, useNavigate } from "react-router-dom";
 
 const destinations = [
   {
-    name: "Kochi",
-    desc: "City + culture + food",
+    name: "Fort Kochi",
+    desc: "Historic coastal neighborhood known for colonial architecture, Chinese fishing nets, and walkable seaside charm.",
+    longDesc:
+      "Fort Kochi is a historic, water-bound neighborhood in Kochi, Kerala, renowned for its rich colonial heritage, distinct European architecture (Portuguese, Dutch, and British), and iconic Chinese fishing nets. As the site of the first European fort in India, Fort Manuel, it serves as a major cultural tourism hub featuring walkable streets, heritage bungalows, and seaside charm.",
+    image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944",
     guides: 12,
   },
   {
-    name: "Munnar",
-    desc: "Tea hills + nature + viewpoints",
+    name: "Cherai Beach",
+    desc: "Pristine golden sand beach with calm waters, palm-lined shoreline, and scenic backwater views near Kochi.",
+    longDesc:
+      "Cherai Beach, located on Vypin Island near Kochi, Kerala, is a 10 km long, pristine coastal destination known for its shallow, gentle waters ideal for swimming. Often called the Princess of the Arabian Sea, it offers a unique combination of scenic backwaters and the sea in one view, featuring golden sands, coconut groves, and frequent dolphin sightings.",
+    image: "https://images.unsplash.com/photo-1593696140826-c58b021acf8b",
     guides: 8,
-  },
-  {
-    name: "Alleppey",
-    desc: "Backwaters + villages + slow travel",
-    guides: 10,
   },
 ];
 
@@ -87,79 +88,37 @@ const Destinations = () => {
           {destinations.map((destination) => (
             <div
               key={destination.name}
-              className="animate-fadeInUp"
+              className="destination-card animate-fadeInUp"
               onClick={() => openGuidesFor(destination.name)}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-0.5rem)";
-                e.currentTarget.style.borderColor = "#22c55e";
-                e.currentTarget.style.boxShadow =
-                  "0 0 30px rgba(34,197,94,0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.borderColor = "#1f2937";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-              style={{
-                padding: "1.5rem",
-                borderRadius: "1rem",
-                background: "#0f172a",
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-                border: "1px solid #1f2937",
-              }}
             >
-              <h2
-                style={{
-                  margin: "0 0 0.25rem",
-                  fontSize: "1.5rem",
-                  fontWeight: "600",
-                  color: "white",
-                }}
-              >
-                {destination.name}
-              </h2>
+              <img
+                src={destination.image}
+                alt={destination.name}
+                className="destination-card-image"
+              />
 
-              <p
-                style={{
-                  color: "#4ade80",
-                  fontSize: "0.875rem",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                ✓ {destination.guides} verified local guides
-              </p>
+              <div className="destination-card-overlay" />
 
-              <p style={{ color: "#94a3b8", marginBottom: "1rem" }}>
-                {destination.desc}
-              </p>
+              <div className="destination-card-content">
+                <h2 className="destination-card-title">{destination.name}</h2>
 
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openGuidesFor(destination.name);
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#4ade80";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#22c55e";
-                }}
-                style={{
-                  width: "100%",
-                  padding: "0.65rem 1rem",
-                  background: "#22c55e",
-                  border: "none",
-                  borderRadius: "0.5rem",
-                  color: "#020617",
-                  cursor: "pointer",
-                  fontWeight: "600",
-                  transition: "background 0.2s ease",
-                }}
-              >
-                Find Guides in {destination.name}
-              </button>
+                <p className="destination-card-desc line-clamp-2">
+                  {destination.desc}
+                </p>
+
+                <p className="destination-card-guides">✓ Verified guides available</p>
+
+                <button
+                  type="button"
+                  className="destination-card-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openGuidesFor(destination.name);
+                  }}
+                >
+                  Explore Guides
+                </button>
+              </div>
             </div>
           ))}
         </div>

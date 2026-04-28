@@ -40,91 +40,44 @@ const GuideCard = ({ guide, highlight = false, index = 0 }) => {
 
   return (
     <div
-      className="animate-fadeInUp"
+      className="guide-card animate-fadeInUp"
       onClick={() => {
         if (window.gtag) {
           window.gtag('event', 'guide_click', { guide: guide.name });
         }
         navigate(`/guides/${guide.id}`);
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = "translateY(-0.5rem)";
-        e.currentTarget.style.borderColor = "#22c55e";
-        if (!highlight) {
-          e.currentTarget.style.boxShadow = "0 0 30px rgba(34,197,94,0.16)";
-        }
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = "translateY(0)";
-        e.currentTarget.style.borderColor = highlight ? "#22c55e" : "#1f2937";
-        e.currentTarget.style.boxShadow = highlight
-          ? "0 0 30px rgba(34,197,94,0.25)"
-          : "none";
-      }}
-      style={{
-        padding: "1.5rem",
-        borderRadius: "1rem",
-        background: highlight ? "#111827" : "#0f172a",
-        color: "white",
-        cursor: "pointer",
-        transition: "all 0.3s ease",
-        border: `1px solid ${highlight ? "#22c55e" : "#1f2937"}`,
-        boxShadow: highlight ? "0 0 30px rgba(34,197,94,0.25)" : "none",
-        animationDelay: `${index * 80}ms`,
-      }}
+      style={{ animationDelay: `${index * 80}ms` }}
     >
-      <h3 style={{ margin: 0, fontSize: "1.25rem", fontWeight: "600" }}>
-        {guide.name}
-      </h3>
+      <div className="guide-card-bg" />
+      <div className="guide-card-overlay" />
 
-      <p style={{ color: "#4ade80", fontSize: "0.875rem", marginTop: "0.25rem" }}>
-        ✓ Verified • {guide.location}
-        {guide.verified && (
-          <span style={{ marginLeft: "0.5rem", fontSize: "0.75rem" }}>
-            Verified via WhatsApp
-          </span>
-        )}
-      </p>
+      <div className="guide-card-content">
+        <h3 className="guide-card-title">{guide.name}</h3>
 
-      <p style={{ color: "#94a3b8", marginTop: "0.5rem", fontSize: "0.875rem" }}>
-        {languages} • ₹{guide.price}/day
-      </p>
+        <p className="guide-card-meta">
+          ✓ Verified • {guide.location}
+        </p>
 
-      <p style={{ color: "#64748b", fontSize: "0.75rem", marginTop: "0.5rem" }}>
-        ⭐ {guide.rating} • 120+ travelers • Responds in minutes
-      </p>
+        <p className="guide-card-details">
+          {languages} • ₹{guide.price}/day
+        </p>
 
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          openGuideChat(guide);
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "#4ade80";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "#22c55e";
-        }}
-        style={{
-          marginTop: "1rem",
-          width: "100%",
-          padding: "0.65rem 1rem",
-          background: "#22c55e",
-          border: "none",
-          borderRadius: "0.5rem",
-          color: "#020617",
-          cursor: "pointer",
-          fontWeight: "600",
-          transition: "background 0.2s ease",
-        }}
-      >
-        Chat with Guide
-      </button>
+        <p className="guide-card-subtext">
+          ⭐ {guide.rating} • 120+ travelers
+        </p>
 
-      <p className="text-xs text-gray-500 mt-2 text-center">
-        Opens WhatsApp • No commitment
-      </p>
+        <button
+          type="button"
+          className="guide-card-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            openGuideChat(guide);
+          }}
+        >
+          Chat with Guide
+        </button>
+      </div>
     </div>
   );
 };

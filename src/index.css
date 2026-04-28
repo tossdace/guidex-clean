@@ -70,6 +70,162 @@ html, body {
   animation: fadeInUp 0.6s ease both;
 }
 
+.destination-card {
+  position: relative;
+  border: 1px solid #1f2937;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.destination-card:hover {
+  border-color: #22c55e;
+  transform: translateY(-0.5rem);
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.2);
+}
+
+.destination-card-image {
+  width: 100%;
+  height: 16rem;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.destination-card:hover .destination-card-image {
+  transform: scale(1.05);
+}
+
+.destination-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3), transparent);
+}
+
+.destination-card-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.25rem;
+}
+
+.destination-card-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.guide-card {
+  position: relative;
+  border: 1px solid #1f2937;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.guide-card:hover {
+  border-color: #22c55e;
+  transform: translateY(-0.5rem);
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.25);
+}
+
+.guide-card-bg {
+  width: 100%;
+  height: 16rem;
+  background: linear-gradient(135deg, #1e293b 0%, #020617 100%);
+}
+
+.guide-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4), transparent);
+}
+
+.guide-card-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.25rem;
+}
+
+.guide-card-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.guide-card-meta,
+.guide-card-details,
+.guide-card-subtext {
+  margin: 0;
+}
+
+.guide-card-button {
+  margin-top: 1rem;
+  width: 100%;
+  background: #22c55e;
+  color: #020617;
+  font-weight: 700;
+  padding: 0.85rem 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.guide-card-button:hover {
+  background: #4ade80;
+}
+
+.destination-card-desc {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+}
+
+.destination-card-guides {
+  color: #4ade80;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.destination-card-button {
+  width: 100%;
+  background: #22c55e;
+  color: #020617;
+  font-weight: 700;
+  padding: 0.85rem 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.destination-card-button:hover {
+  background: #4ade80;
+}
+
+.line-clamp-2,
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  -webkit-line-clamp: 3;
+}
+
 /* ===== TYPOGRAPHY ===== */
 h1 {
   font-size: 56px;
