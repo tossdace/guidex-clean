@@ -77,13 +77,21 @@ const GuideProfile = () => {
       <button
         type="button"
         onClick={() => {
-          const msg = `Hi, I found Hirevoy.
+          const confirm = window.confirm(
+            "Continue to WhatsApp to chat with this guide?"
+          );
 
-I'm interested in booking a guide.
+          if (!confirm) return;
 
-Location: ${guide.location}
-Guide: ${guide.name}
-Budget: ₹${guide.price}`;
+          const msg = `Hi! I found Hirevoy 👋
+
+I'm interested in booking a local guide.
+
+📍 Location: ${guide.location}
+👤 Guide: ${guide.name}
+💰 Budget: ₹${guide.price}
+
+Can you share details and availability?`;
           window.open(
             `https://wa.me/919778405403?text=${encodeURIComponent(msg)}`
           );
@@ -97,16 +105,20 @@ Budget: ₹${guide.price}`;
         style={{
           marginTop: "20px",
           padding: "12px 20px",
-          background: "#22c55e",
+          background: "linear-gradient(135deg, #22c55e, #16a34a)",
           border: "none",
           borderRadius: "8px",
           cursor: "pointer",
           fontWeight: "bold",
+          boxShadow: "0 6px 20px rgba(34,197,94,0.3)",
           transition: "transform 0.2s ease",
         }}
       >
-        Contact on WhatsApp
+        Chat with Guide
       </button>
+      <p style={{ fontSize: "0.8rem", color: "#94a3b8", marginTop: "6px" }}>
+        Usually responds within minutes ⚡
+      </p>
     </div>
   );
 };

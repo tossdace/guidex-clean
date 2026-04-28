@@ -1375,10 +1375,10 @@ const Navbar = ({ darkMode, onToggleTheme }) => {
   return (
     <nav className={`nav-shell ${scrolled ? "scrolled" : ""}`}>
       <div className="nav-bar glass-panel">
-        <a href="#home" className="nav-brand" onClick={closeMenu}>
+        <Link to="/" className="nav-brand" onClick={closeMenu}>
           <LogoMark />
           <span className="font-display nav-brand__name">Hirevoy</span>
-        </a>
+        </Link>
 
         <div className="nav-main">
           <div className="nav-links">
@@ -1768,7 +1768,7 @@ const FeaturedGuides = ({ onBookNow }) => (
                 className="button button-primary"
                 onClick={onBookNow}
               >
-                Book Now
+                Chat with Guide
               </button>
             </div>
           </article>
@@ -2001,15 +2001,23 @@ export default function App() {
       return;
     }
 
-    const text = `Hi, I found Hirevoy.
+    const confirm = window.confirm(
+      "Continue to WhatsApp to chat with Hirevoy?"
+    );
 
-I'm interested in booking a guide.
+    if (!confirm) return;
 
-Location: ${formData.location}
-Guide: Local guide recommendation
-Budget: To be discussed
+    const text = `Hi! I found Hirevoy 👋
+
+I'm interested in booking a local guide.
+
+📍 Location: ${formData.location}
+👤 Guide: Local guide recommendation
+💰 Budget: To be discussed
 Name: ${formData.name}
-Message: ${formData.message || "A local guide recommendation."}`;
+Message: ${formData.message || "A local guide recommendation."}
+
+Can you share details and availability?`;
 
     openWhatsAppMessage(text);
     setShowForm(false);
@@ -2047,19 +2055,30 @@ Message: ${formData.message || "A local guide recommendation."}`;
 
       <a
         href={`https://wa.me/919778405403?text=${encodeURIComponent(
-          `Hi, I found Hirevoy.
+          `Hi! I found Hirevoy 👋
 
-I'm interested in booking a guide.
+I'm interested in booking a local guide.
 
-Location: Kerala
-Guide: Local guide recommendation
-Budget: To be discussed`
+📍 Location: Kerala
+👤 Guide: Local guide recommendation
+💰 Budget: To be discussed
+
+Can you share details and availability?`
         )}`}
         target="_blank"
         rel="noopener noreferrer"
         className="whatsapp-fab"
         aria-label="Chat on WhatsApp"
         title="Chat on WhatsApp"
+        onClick={(event) => {
+          const confirm = window.confirm(
+            "Continue to WhatsApp to chat with Hirevoy?"
+          );
+
+          if (!confirm) {
+            event.preventDefault();
+          }
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

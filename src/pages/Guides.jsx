@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import guides from "../data/guides";
 
 const Guides = () => {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
+  const [searchParams] = useSearchParams();
+  const locationFilter = searchParams.get("location") || "";
+  const [search, setSearch] = useState(() => locationFilter);
   const [budget, setBudget] = useState("");
   const [language, setLanguage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -15,6 +17,12 @@ const Guides = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (search) {
+      window.scrollTo({ top: 200, behavior: "smooth" });
+    }
+  }, [search]);
+
   const filtered = guides.filter((g) => {
     return (
       g.location.toLowerCase().includes(search.toLowerCase()) &&
@@ -23,11 +31,63 @@ const Guides = () => {
     );
   });
 
-  if (loading) return <p style={{ padding: "2rem" }}>Loading guides...</p>;
+  if (loading) {
+    return (
+      <p
+        style={{
+          padding: "2rem",
+          minHeight: "100vh",
+          background: "#020617",
+          color: "white",
+        }}
+      >
+        Loading guides...
+      </p>
+    );
+  }
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1 style={{ marginBottom: "1rem" }}>Find Trusted Local Guides</h1>
+    <div
+      style={{
+        padding: "2rem",
+        minHeight: "100vh",
+        background: "#020617",
+        color: "white",
+      }}
+    >
+      <h1 style={{ marginBottom: "1rem", fontWeight: "700" }}>
+        Find Trusted Local Guides
+      </h1>
+
+      {search && (
+        <p
+          style={{
+            marginBottom: "1rem",
+            color: "#22c55e",
+            fontWeight: "bold",
+          }}
+        >
+          Showing guides for: {search}
+        </p>
+      )}
+
+      {search && (
+        <button
+          type="button"
+          onClick={() => setSearch("")}
+          style={{
+            marginBottom: "1rem",
+            padding: "6px 10px",
+            background: "#ef4444",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            color: "white",
+          }}
+        >
+          Clear Filter
+        </button>
+      )}
 
       <input
         type="text"
@@ -39,6 +99,10 @@ const Guides = () => {
           width: "100%",
           maxWidth: "300px",
           marginBottom: "1.5rem",
+          background: "#0f172a",
+          border: "1px solid rgba(255,255,255,0.1)",
+          color: "white",
+          borderRadius: "6px",
         }}
       />
 
@@ -55,7 +119,13 @@ const Guides = () => {
           onChange={(e) =>
             setBudget(e.target.value === "" ? "" : Number(e.target.value))
           }
-          style={{ padding: "8px" }}
+          style={{
+            padding: "8px",
+            background: "#0f172a",
+            color: "white",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: "6px",
+          }}
         >
           <option value="">All Budgets</option>
           <option value="1000">Under ₹1000</option>
@@ -65,7 +135,13 @@ const Guides = () => {
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          style={{ padding: "8px" }}
+          style={{
+            padding: "8px",
+            background: "#0f172a",
+            color: "white",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: "6px",
+          }}
         >
           <option value="">All Languages</option>
           <option value="English">English</option>
@@ -91,12 +167,12 @@ const Guides = () => {
               color: "white",
               cursor: "pointer",
               transition: "all 0.25s ease",
-              border: "1px solid rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.06)",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "translateY(-6px)";
               e.currentTarget.style.boxShadow =
-                "0 10px 30px rgba(0,0,0,0.4)";
+                "0 12px 35px rgba(34,197,94,0.15)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "translateY(0)";
@@ -129,13 +205,21 @@ const Guides = () => {
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                const msg = `Hi, I found Hirevoy.
+                const confirm = window.confirm(
+                  "Continue to WhatsApp to chat with this guide?"
+                );
 
-I'm interested in booking a guide.
+                if (!confirm) return;
 
-Location: ${g.location}
-Guide: ${g.name}
-Budget: ₹${g.price}`;
+                const msg = `Hi! I found Hirevoy 👋
+
+I'm interested in booking a local guide.
+
+📍 Location: ${g.location}
+👤 Guide: ${g.name}
+💰 Budget: ₹${g.price}
+
+Can you share details and availability?`;
                 window.open(
                   `https://wa.me/919778405403?text=${encodeURIComponent(msg)}`
                 );
@@ -149,23 +233,45 @@ Budget: ₹${g.price}`;
               style={{
                 marginTop: "1rem",
                 padding: "8px 12px",
-                background: "#22c55e",
+                background: "linear-gradient(135deg, #22c55e, #16a34a)",
                 border: "none",
                 borderRadius: "6px",
                 cursor: "pointer",
+                fontWeight: "bold",
+                boxShadow: "0 6px 20px rgba(34,197,94,0.3)",
                 transition: "transform 0.2s ease",
               }}
             >
-              Contact
+              Chat with Guide
             </button>
+            <p
+              style={{ fontSize: "0.8rem", color: "#94a3b8", marginTop: "6px" }}
+            >
+              Usually responds within minutes ⚡
+            </p>
           </div>
         ))}
       </div>
 
       {filtered.length === 0 && (
-        <p style={{ marginTop: "2rem", color: "#94a3b8" }}>
-          No guides found. Try a different search.
-        </p>
+        <div style={{ marginTop: "2rem" }}>
+          <p style={{ color: "#94a3b8" }}>No guides found for "{search}"</p>
+
+          <button
+            type="button"
+            onClick={() => setSearch("")}
+            style={{
+              marginTop: "10px",
+              padding: "8px 12px",
+              background: "#22c55e",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+            }}
+          >
+            View All Guides
+          </button>
+        </div>
       )}
     </div>
   );
