@@ -127,6 +127,7 @@ img {
 .destination-card,
 .guide-card,
 .card {
+  position: relative;
   background: var(--crystal-bg);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -135,9 +136,9 @@ img {
   color: var(--text-dew);
   box-shadow: var(--crystal-inner), 0 8px 32px rgba(0, 0, 0, 0.22);
   transition:
-    transform 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease;
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
 }
 
 .destination-card,
@@ -145,21 +146,57 @@ img {
   overflow: hidden;
 }
 
+/* ── Crystal shimmer sweep on hover ───────────────────────────────── */
+.destination-card::after,
+.guide-card::after,
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.06) 45%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.06) 55%,
+    transparent 60%
+  );
+  background-size: 250% 100%;
+  background-position: 200% 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.destination-card:hover::after,
+.guide-card:hover::after,
+.card:hover::after {
+  opacity: 1;
+  animation: crystal-sweep 0.8s ease forwards;
+}
+
 .destination-card:hover,
 .guide-card:hover,
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px) scale(1.012);
   border-color: var(--crystal-border-hover);
   box-shadow:
     var(--crystal-inner),
-    var(--crystal-glow),
-    0 22px 50px rgba(0, 0, 0, 0.28);
+    0 0 40px rgba(52, 211, 153, 0.18),
+    0 24px 55px rgba(0, 0, 0, 0.30);
 }
 
 .destination-card img {
   width: 100%;
   height: 210px;
   object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.destination-card:hover img {
+  transform: scale(1.06);
 }
 
 .card-content,
@@ -182,6 +219,7 @@ img {
   font-size: 12px;
   font-weight: 600;
   margin-bottom: 10px;
+  animation: badge-glow 3s ease-in-out infinite;
 }
 
 /* ── Typography ───────────────────────────────────────────────────── */
@@ -215,6 +253,7 @@ img {
 .primary-btn,
 .card-btn,
 .guide-btn {
+  position: relative;
   width: 100%;
   margin-top: 14px;
   border: 1px solid rgba(52, 211, 153, 0.25);
@@ -224,18 +263,53 @@ img {
   padding: 12px 16px;
   font-weight: 700;
   box-shadow: 0 4px 18px rgba(52, 211, 153, 0.20);
+  overflow: hidden;
   transition:
-    transform 0.25s ease,
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
     background 0.25s ease,
     box-shadow 0.25s ease;
+}
+
+/* Button shimmer sweep */
+.primary-btn::before,
+.card-btn::before,
+.guide-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  transition: none;
+  pointer-events: none;
+}
+
+.primary-btn:hover::before,
+.card-btn:hover::before,
+.guide-btn:hover::before {
+  animation: btn-shimmer 0.65s ease forwards;
 }
 
 .primary-btn:hover,
 .card-btn:hover,
 .guide-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.02);
   background: linear-gradient(135deg, #34d399, #6ee7b7);
-  box-shadow: 0 8px 28px rgba(52, 211, 153, 0.32);
+  box-shadow:
+    0 8px 28px rgba(52, 211, 153, 0.32),
+    0 0 20px rgba(52, 211, 153, 0.15);
+}
+
+.primary-btn:active,
+.card-btn:active,
+.guide-btn:active {
+  transform: translateY(0) scale(0.98);
 }
 
 /* ── Line clamp ───────────────────────────────────────────────────── */
@@ -254,20 +328,197 @@ img {
   -webkit-line-clamp: 3;
 }
 
-/* ── Shimmer animation ────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Crystal shimmer sweep across cards */
+@keyframes crystal-sweep {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Button shine sweep */
+@keyframes btn-shimmer {
+  0%   { left: -100%; }
+  100% { left: 200%; }
+}
+
+/* Badge subtle glow pulse */
+@keyframes badge-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(52, 211, 153, 0.08); }
+  50%      { box-shadow: 0 0 16px rgba(52, 211, 153, 0.20); }
+}
+
+/* Floating elements (for decorative orbs) */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%      { transform: translateY(-12px); }
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  33%      { transform: translateY(-8px) translateX(4px); }
+  66%      { transform: translateY(4px) translateX(-4px); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%      { transform: translateY(-18px) rotate(3deg); }
+}
+
+/* Glow pulse for accent elements */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}
+
+/* Aurora shifting gradient */
+@keyframes aurora {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Particle drift for firefly-like dots */
+@keyframes drift-1 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translate(80px, -120px) scale(0.6); opacity: 0; }
+}
+
+@keyframes drift-2 {
+  0%   { transform: translate(0, 0) scale(0.8); opacity: 0; }
+  15%  { opacity: 0.8; }
+  85%  { opacity: 0.8; }
+  100% { transform: translate(-60px, -100px) scale(0.4); opacity: 0; }
+}
+
+@keyframes drift-3 {
+  0%   { transform: translate(0, 0) scale(1.2); opacity: 0; }
+  12%  { opacity: 0.6; }
+  88%  { opacity: 0.6; }
+  100% { transform: translate(40px, -140px) scale(0.3); opacity: 0; }
+}
+
+/* Shimmer for text or gradient backgrounds */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
+  0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
+/* Scale-in for page load */
+@keyframes scale-in {
+  0%   { opacity: 0; transform: scale(0.96); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+/* Fade-in-up for staggered elements */
+@keyframes fade-in-up {
+  0%   { opacity: 0; transform: translateY(24px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Rotate glow ring */
+@keyframes rotate-glow {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Breathing scale for hero elements */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.03); }
+}
+
+/* ── Firefly particle overlay ─────────────────────────────────────── */
+.firefly-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.firefly {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.9), transparent 70%);
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.5), 0 0 20px rgba(52, 211, 153, 0.2);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.firefly:nth-child(1) { left: 12%; top: 75%; width: 3px; height: 3px; animation: drift-1 7s 0s infinite; }
+.firefly:nth-child(2) { left: 28%; top: 82%; width: 5px; height: 5px; animation: drift-2 9s 1.2s infinite; }
+.firefly:nth-child(3) { left: 45%; top: 70%; width: 3px; height: 3px; animation: drift-3 8s 0.5s infinite; }
+.firefly:nth-child(4) { left: 62%; top: 78%; width: 4px; height: 4px; animation: drift-1 10s 2s infinite; }
+.firefly:nth-child(5) { left: 78%; top: 85%; width: 3px; height: 3px; animation: drift-2 7.5s 0.8s infinite; }
+.firefly:nth-child(6) { left: 88%; top: 72%; width: 5px; height: 5px; animation: drift-3 11s 1.5s infinite; }
+.firefly:nth-child(7) { left: 35%; top: 88%; width: 3px; height: 3px; animation: drift-1 8.5s 3s infinite; }
+.firefly:nth-child(8) { left: 55%; top: 90%; width: 4px; height: 4px; animation: drift-2 9.5s 2.5s infinite; }
+
+/* ── Floating decorative orbs ─────────────────────────────────────── */
+.floating-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(40px);
+  opacity: 0.15;
+}
+
+.floating-orb-1 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.5), transparent 70%);
+  animation: float-slow 12s ease-in-out infinite;
+}
+
+.floating-orb-2 {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.4), transparent 70%);
+  animation: float-delayed 10s ease-in-out infinite;
+}
+
+.floating-orb-3 {
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(110, 231, 183, 0.3), transparent 70%);
+  animation: float-slow 14s ease-in-out infinite 2s;
+}
+
+/* ── Page entrance animation ──────────────────────────────────────── */
+.page-enter {
+  animation: scale-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ── Staggered card entrance (for non-framer pages) ───────────────── */
+.card-animate {
+  opacity: 0;
+  animation: fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.card-animate:nth-child(1) { animation-delay: 0.05s; }
+.card-animate:nth-child(2) { animation-delay: 0.12s; }
+.card-animate:nth-child(3) { animation-delay: 0.19s; }
+.card-animate:nth-child(4) { animation-delay: 0.26s; }
+.card-animate:nth-child(5) { animation-delay: 0.33s; }
+.card-animate:nth-child(6) { animation-delay: 0.40s; }
+.card-animate:nth-child(7) { animation-delay: 0.47s; }
+.card-animate:nth-child(8) { animation-delay: 0.54s; }
+.card-animate:nth-child(9) { animation-delay: 0.61s; }
+
+/* ── Input focus glow animation ───────────────────────────────────── */
+input:focus,
+select:focus {
+  outline: none;
+  border-color: rgba(52, 211, 153, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.12), 0 0 20px rgba(52, 211, 153, 0.08);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* ── Responsive grids ─────────────────────────────────────────────── */

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   AnimatePresence,
@@ -131,11 +131,22 @@ const trustItems = [
 ];
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 18 },
+  hidden: { opacity: 0, y: 30, filter: "blur(6px)" },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.42, ease: "easeOut" },
+    filter: "blur(0px)",
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+const fadeScale = {
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
@@ -143,8 +154,8 @@ const stagger = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.04,
+      staggerChildren: 0.12,
+      delayChildren: 0.06,
     },
   },
 };
@@ -299,6 +310,14 @@ const WhatsAppIcon = ({ className = "" }) => (
   </svg>
 );
 
+const Fireflies = () => (
+  <div className="firefly-container">
+    {Array.from({ length: 8 }, (_, i) => (
+      <div className="firefly" key={i} />
+    ))}
+  </div>
+);
+
 const SupportAction = ({ children, icon: Icon, onClick }) => (
   <button
     className="flex w-full items-center gap-3 rounded-2xl border border-white/[0.12] bg-white/[0.06] px-4 py-3 text-left text-sm font-semibold text-[#ecfdf5] transition hover:border-[#34d399]/35 hover:bg-white/[0.09]"
@@ -314,6 +333,13 @@ const SupportAction = ({ children, icon: Icon, onClick }) => (
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const closeAndScroll = (id) => {
     setIsOpen(false);
@@ -322,7 +348,11 @@ const Navbar = () => {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-5">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between gap-2 rounded-full border border-white/[0.13] bg-[#061612]/72 px-3 py-2 shadow-[0_12px_42px_rgba(0,0,0,0.28)] backdrop-blur-2xl sm:gap-4 sm:px-5">
+      <nav className={`mx-auto flex max-w-6xl items-center justify-between gap-2 rounded-full border px-3 py-2 backdrop-blur-2xl sm:gap-4 sm:px-5 transition-all duration-500 ${
+        scrolled
+          ? "border-white/[0.18] bg-[#061612]/88 shadow-[0_12px_42px_rgba(0,0,0,0.38),0_0_30px_rgba(52,211,153,0.08)]"
+          : "border-white/[0.13] bg-[#061612]/72 shadow-[0_12px_42px_rgba(0,0,0,0.28)]"
+      }`}>
         <Link
           aria-label="Hirevoy home"
           className="flex min-w-0 items-center gap-2"
@@ -434,6 +464,10 @@ const Hero = () => {
       />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,22,18,0.72)_0%,rgba(6,22,18,0.58)_48%,#061612_100%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_42%,rgba(52,211,153,0.13),transparent_58%)]" />
+      
+      <Fireflies />
+      <div className="floating-orb floating-orb-1" style={{ top: "10%", left: "-5%" }} />
+      <div className="floating-orb floating-orb-2" style={{ top: "60%", right: "-8%" }} />
 
       <Motion.div
         className="relative z-10 mx-auto max-w-5xl text-center"
@@ -450,7 +484,24 @@ const Hero = () => {
         </Motion.div>
         <Motion.h1
           className="mx-auto max-w-4xl text-[clamp(2.85rem,11vw,5.9rem)] font-extrabold leading-[0.96] text-[#ecfdf5]"
-          variants={fadeUp}
+          variants={{
+            hidden: { opacity: 0, y: 40, filter: "blur(10px)", scale: 0.97 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              scale: 1,
+              transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+            },
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            scale: 1,
+            transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+          }}
+          initial={{ opacity: 0, y: 40, filter: "blur(10px)", scale: 0.97 }}
         >
           Explore Kerala Beyond Tourist Traps
         </Motion.h1>
@@ -531,6 +582,8 @@ const DestinationCard = ({ destination }) => {
       variants={fadeUp}
       viewport={sectionViewport}
       whileInView="visible"
+      whileHover={{ y: -8, scale: 1.015 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
     >
       <img
         alt={`${destination.name}, Kerala`}
@@ -617,6 +670,8 @@ const GuideCard = ({ guide }) => {
       variants={fadeUp}
       viewport={sectionViewport}
       whileInView="visible"
+      whileHover={{ y: -6, scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
     >
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -755,6 +810,8 @@ const ExperienceSection = () => (
 const FinalCTA = () => (
   <section className={`relative overflow-hidden border-y border-white/[0.12] bg-[#0c2219] ${pageGutter} py-16 sm:py-20 lg:py-24`}>
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(52,211,153,0.15),transparent_64%)]" />
+    <div className="floating-orb floating-orb-3" style={{ bottom: "10%", left: "20%" }} />
+    <div className="floating-orb floating-orb-1" style={{ top: "15%", right: "10%" }} />
     <Motion.div
       className="relative mx-auto max-w-4xl text-center"
       initial="hidden"
@@ -946,18 +1003,21 @@ const SupportWidget = () => {
         <CircleHelp aria-hidden="true" className="h-5 w-5" />
       </button>
 
-      <button
+      <Motion.button
         aria-label="Chat on WhatsApp"
-        className="grid h-12 w-12 place-items-center rounded-full bg-[linear-gradient(135deg,#34d399,#059669)] text-white shadow-[0_14px_34px_rgba(52,211,153,0.34)] transition hover:scale-105 hover:shadow-[0_18px_44px_rgba(52,211,153,0.42)] active:scale-95 sm:h-14 sm:w-14"
+        className="grid h-12 w-12 place-items-center rounded-full bg-[linear-gradient(135deg,#34d399,#059669)] text-white shadow-[0_14px_34px_rgba(52,211,153,0.34)] transition hover:shadow-[0_18px_44px_rgba(52,211,153,0.42)] sm:h-14 sm:w-14"
         onClick={handleWhatsAppClick}
         onPointerCancel={clearLongPress}
         onPointerDown={startLongPress}
         onPointerLeave={clearLongPress}
         onPointerUp={clearLongPress}
         type="button"
+        whileHover={{ scale: 1.1, rotate: 5 }}
+        whileTap={{ scale: 0.92 }}
+        transition={{ type: "spring", stiffness: 400, damping: 15 }}
       >
         <WhatsAppIcon className="h-6 w-6 sm:h-7 sm:w-7" />
-      </button>
+      </Motion.button>
     </div>
   );
 };
