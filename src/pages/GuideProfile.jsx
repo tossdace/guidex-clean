@@ -85,7 +85,7 @@ const GuideProfile = () => {
 
 I'm planning a trip to ${guide.location}.
 
-- Budget: ₹${guide.price}
+- Budget: Min ₹${guide.price}
 - Dates: [your dates]
 
 Are you available? Can you suggest a plan?`;
@@ -153,7 +153,7 @@ Are you available? Can you suggest a plan?`;
             </p>
 
             <p style={{ color: "#86efac", marginTop: "0.5rem" }}>
-              {languageText} • ₹{guide.price}/day
+              {languageText} • ₹{guide.price} min/day
             </p>
 
             <div

@@ -1,9 +1,9 @@
 const guides = [
   {
-    id: "arjun",
-    name: "Arjun Nair",
+    id: "abishek",
+    name: "Abishek Rajan",
     location: "Kochi",
-    price: 1500,
+    price: 400,
     language: "English",
     languages: ["English", "Malayalam"],
 
@@ -14,7 +14,7 @@ const guides = [
     id: "parvathy",
     name: "Parvathy Menon",
     location: "Munnar",
-    price: 1200,
+    price: 350,
     language: "Malayalam",
     languages: ["Malayalam", "English"],
 
@@ -25,7 +25,7 @@ const guides = [
     id: "eldho",
     name: "Eldho Thomas",
     location: "Alleppey",
-    price: 1000,
+    price: 300,
     language: "English",
     languages: ["English", "Malayalam"],
 

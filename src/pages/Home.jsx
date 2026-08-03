@@ -222,7 +222,7 @@ I'm interested in booking a local guide.
 
 Location: ${guide.location}
 Guide: ${guide.name}
-Budget: Rs.${guide.price}
+Budget: Rs.${guide.price} min
 
 Can you share details and availability?`;
 
@@ -703,7 +703,7 @@ const GuideCard = ({ guide }) => {
             aria-hidden="true"
             className="h-4 w-4 shrink-0 text-[#34d399]"
           />
-          <span>Rs.{guide.price}/day</span>
+          <span>Rs.{guide.price} min/day</span>
         </div>
       </div>
 

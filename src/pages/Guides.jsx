@@ -48,7 +48,7 @@ I'm interested in booking a local guide.
 
 📍 Location: ${guide.location}
 👤 Guide: ${guide.name}
-💰 Budget: ₹${guide.price}
+💰 Budget: Min ₹${guide.price}
 
 Can you share details and availability?`;
 
@@ -76,7 +76,7 @@ const GuideCard = ({ guide, index = 0 }) => {
       <h3 className="guide-name">{guide.name}</h3>
 
       <p className="guide-meta">
-        {guide.languages.join(", ")} • ₹{guide.price}/day
+        {guide.languages.join(", ")} • ₹{guide.price} min/day
       </p>
 
       <div className="guide-trust">
@@ -327,7 +327,7 @@ const Guides = () => {
                     <h3 className="card-title">{guide.name}</h3>
 
                     <p className="card-desc">
-                      {guide.location} • ₹{guide.price}/day
+                      {guide.location} • ₹{guide.price} min/day
                     </p>
 
                     <p className="card-desc">
