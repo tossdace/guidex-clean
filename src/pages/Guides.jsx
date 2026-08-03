@@ -305,12 +305,15 @@ const Guides = () => {
                 style={{
                   marginTop: "0.75rem",
                   padding: "0.6rem 1rem",
-                  background: "linear-gradient(135deg, #10b981, #34d399)",
-                  border: "none",
+                  background: "rgba(52, 211, 153, 0.10)",
+                  backdropFilter: "blur(16px)",
+                  WebkitBackdropFilter: "blur(16px)",
+                  border: "1px solid rgba(52, 211, 153, 0.35)",
                   borderRadius: "0.5rem",
-                  color: "#061612",
+                  color: "#6ee7b7",
                   cursor: "pointer",
                   fontWeight: "600",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.10), 0 4px 20px rgba(52,211,153,0.12)",
                 }}
               >
                 View All Guides

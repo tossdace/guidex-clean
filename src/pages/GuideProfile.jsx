@@ -21,13 +21,16 @@ const staggerSection = {
 const ctaStyle = {
   width: "100%",
   padding: "0.85rem 1rem",
-  background: "linear-gradient(135deg, #10b981, #34d399)",
-  border: "none",
+  background: "rgba(52, 211, 153, 0.10)",
+  backdropFilter: "blur(16px)",
+  WebkitBackdropFilter: "blur(16px)",
+  border: "1px solid rgba(52, 211, 153, 0.35)",
   borderRadius: "0.75rem",
-  color: "#061612",
+  color: "#6ee7b7",
   cursor: "pointer",
   fontWeight: "600",
-  transition: "background 0.2s ease, transform 0.2s ease",
+  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.10), 0 4px 20px rgba(52,211,153,0.12)",
+  transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
 };
 
 const GuideProfile = () => {
@@ -171,7 +174,7 @@ Are you available? Can you suggest a plan?`;
             <Motion.button
               type="button"
               onClick={chatWithGuide}
-              whileHover={{ scale: 1.03, background: "linear-gradient(135deg, #34d399, #6ee7b7)" }}
+              whileHover={{ scale: 1.03, background: "rgba(52,211,153,0.22)", borderColor: "rgba(52,211,153,0.55)", color: "#ecfdf5", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.14), 0 0 30px rgba(52,211,153,0.22), 0 10px 35px rgba(52,211,153,0.15)" }}
               whileTap={{ scale: 0.97 }}
               style={{ ...ctaStyle, marginTop: "1.5rem" }}
             >
@@ -308,7 +311,7 @@ Are you available? Can you suggest a plan?`;
               <Motion.button
                 type="button"
                 onClick={chatWithGuide}
-                whileHover={{ scale: 1.03, background: "linear-gradient(135deg, #34d399, #6ee7b7)" }}
+                whileHover={{ scale: 1.03, background: "rgba(52,211,153,0.22)", borderColor: "rgba(52,211,153,0.55)", color: "#ecfdf5", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.14), 0 0 30px rgba(52,211,153,0.22), 0 10px 35px rgba(52,211,153,0.15)" }}
                 whileTap={{ scale: 0.97 }}
                 style={{
                   ...ctaStyle,

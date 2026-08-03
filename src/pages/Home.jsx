@@ -242,12 +242,12 @@ const PrimaryButton = ({
   ...props
 }) => {
   const baseClass =
-    "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition duration-200 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#34d399]";
+    "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-all duration-300 active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#34d399]";
   const variants = {
     solid:
-      "bg-[#34d399] text-[#061612] shadow-[0_10px_26px_rgba(52,211,153,0.22)] hover:bg-[#6ee7b7] hover:-translate-y-0.5",
+      "border border-[#34d399]/30 bg-[rgba(52,211,153,0.08)] backdrop-blur-xl text-[#6ee7b7] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_4px_20px_rgba(52,211,153,0.12)] hover:bg-[rgba(52,211,153,0.18)] hover:border-[#34d399]/55 hover:text-[#ecfdf5] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_0_30px_rgba(52,211,153,0.22),0_10px_35px_rgba(52,211,153,0.15)] hover:-translate-y-1",
     glass:
-      "border border-white/18 bg-white/[0.08] text-[#ecfdf5] backdrop-blur-md hover:border-[#34d399]/45 hover:bg-white/[0.11] hover:-translate-y-0.5",
+      "border border-white/18 bg-white/[0.06] backdrop-blur-xl text-[#d1fae5] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.12)] hover:border-[#34d399]/40 hover:bg-white/[0.12] hover:text-[#ecfdf5] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_0_24px_rgba(52,211,153,0.15)] hover:-translate-y-1",
   };
   const buttonClass = `${baseClass} ${variants[variant]} ${className}`;
   const content = (
@@ -348,10 +348,10 @@ const Navbar = () => {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-5">
-      <nav className={`mx-auto flex max-w-6xl items-center justify-between gap-2 rounded-full border px-3 py-2 backdrop-blur-2xl sm:gap-4 sm:px-5 transition-all duration-500 ${
+      <nav className={`nav-glow-border ${scrolled ? "scrolled" : ""} mx-auto flex max-w-6xl items-center justify-between gap-2 rounded-full border px-3 py-2 backdrop-blur-2xl sm:gap-4 sm:px-5 transition-all duration-500 ${
         scrolled
-          ? "border-white/[0.18] bg-[#061612]/88 shadow-[0_12px_42px_rgba(0,0,0,0.38),0_0_30px_rgba(52,211,153,0.08)]"
-          : "border-white/[0.13] bg-[#061612]/72 shadow-[0_12px_42px_rgba(0,0,0,0.28)]"
+          ? "border-white/[0.20] bg-[#061612]/90 shadow-[0_12px_42px_rgba(0,0,0,0.42),0_0_40px_rgba(52,211,153,0.10)]"
+          : "border-white/[0.13] bg-[#061612]/60 shadow-[0_12px_42px_rgba(0,0,0,0.28)]"
       }`}>
         <Link
           aria-label="Hirevoy home"
@@ -359,7 +359,7 @@ const Navbar = () => {
           onClick={() => setIsOpen(false)}
           to="/"
         >
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#34d399] text-sm font-extrabold text-[#061612] sm:h-10 sm:w-10">
+          <span className="logo-glow grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#34d399] text-sm font-extrabold text-[#061612] sm:h-10 sm:w-10">
             H
           </span>
           <span className="truncate text-lg font-extrabold text-[#ecfdf5] sm:text-xl">
@@ -369,17 +369,17 @@ const Navbar = () => {
 
         <div className="hidden items-center gap-7 text-sm font-medium text-[#d1fae5] md:flex">
           <button
-            className="transition hover:text-[#34d399]"
+            className="nav-link transition hover:text-[#34d399]"
             onClick={() => scrollToId("destinations")}
             type="button"
           >
             Destinations
           </button>
-          <Link className="transition hover:text-[#34d399]" to="/guides">
+          <Link className="nav-link transition hover:text-[#34d399]" to="/guides">
             Guides
           </Link>
           <button
-            className="transition hover:text-[#34d399]"
+            className="nav-link transition hover:text-[#34d399]"
             onClick={() => scrollToId("experience")}
             type="button"
           >
@@ -483,7 +483,7 @@ const Hero = () => {
           Kerala local guide platform
         </Motion.div>
         <Motion.h1
-          className="mx-auto max-w-4xl text-[clamp(2.85rem,11vw,5.9rem)] font-extrabold leading-[0.96] text-[#ecfdf5]"
+          className="gradient-text mx-auto max-w-4xl text-[clamp(2.85rem,11vw,5.9rem)] font-extrabold leading-[0.96]"
           variants={{
             hidden: { opacity: 0, y: 40, filter: "blur(10px)", scale: 0.97 },
             visible: {
